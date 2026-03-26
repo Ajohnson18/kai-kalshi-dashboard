@@ -571,6 +571,25 @@ function relevantSources(ticker) {
 }
 
 // ── Open modal ─────────────────────────────────────────────────────────
+
+// ── Format model_note (ELI2 plain text) to HTML ───────────────────────────
+function formatModelNote(note) {
+  if (!note) return null;
+  if (note.includes('active_bets.json')) return null;
+  // Split on double newlines
+  return note.split(/\n{2,}/).map(p => {
+    const t = p.trim();
+    if (!t) return '';
+    // Bold the emoji section headers
+    const b = t.replace(/^([🎯📊🧠💰🗣⚠📈⚡🔍].{1,65}?:)/u, '<strong>$1</strong>');
+    // Bullets and newlines
+    const r = b.replace(/
+•/g, '<br>•').replace(/
+/g, '<br>');
+    return '<p>' + r + '</p>';
+  }).filter(Boolean).join('');
+}
+
 function openBet(ticker) {
   const b = allBets.find(x=>x.ticker===ticker);
   if (!b) return;
@@ -663,7 +682,7 @@ function openBet(ticker) {
     <!-- Why -->
     <div class="msec">
       <div class="msec-title">Why we made this bet</div>
-      <div class="reasoning-text">${data.why||'<p>See active_bets.json for reasoning.</p>'}</div>
+      <div class="reasoning-text">${formatModelNote(b.model_note) || data.why || '<p style="color:#999;font-style:italic">Reasoning not yet populated — will appear after next check-in run.</p>'}</div>
     </div>
 
     <!-- Sources -->
