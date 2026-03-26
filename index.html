@@ -807,7 +807,7 @@ async function refresh() {
   const soon = bets.filter(b => {
     if (!b.closes) return false;
     const d = new Date(b.closes); d.setHours(0,0,0,0);
-    return (d - today) / 86400000 <= 14;
+    return (d - today) / 86400000 <= 21;
   }).sort((a,b) => new Date(a.closes) - new Date(b.closes));
   const settlingBanner = document.getElementById('settling-banner');
   const settlingList   = document.getElementById('settling-list');
