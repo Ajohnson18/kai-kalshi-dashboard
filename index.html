@@ -184,64 +184,40 @@ const CAT = {economy:'ec',sports:'sp',politics:'po',companies:'co'};
 
 // ── Per-bet data ────────────────────────────────────────────────────────
 const BET_DATA = {
-  'KXCPI-26APR-T0.7': {
-    why: `<p>Cleveland Fed confirmed March CPI at <strong>0.76% MoM</strong> — directly above the 0.7% strike we're betting on. April was the first full month of the new tariff regime. Historical analysis of the 2018-2019 US tariff implementation shows CPI spiked 0.4-0.7% MoM in the first full enforcement month.</p>
-          <p>Import prices are already up <strong>+1.27% MoM</strong> — a direct tariff pass-through signal that leads CPI by 1-2 months. Energy CPI rose <strong>+1.65%</strong> and food CPI rose <strong>+0.39%</strong>.</p>
-          <p>The market prices this at 27%. Our model says 64%. The gap is the market assuming tariff inflation doesn't persist — we think it does for at least April.</p>`,
-    sources: ['Cleveland Fed CPI Nowcast','BLS Import Price Index','BLS PPI','EIA Gas Prices'],
-    settles: 'May 12, 2026 — BLS April CPI release',
-  },
-  'KXCPI-26APR-T0.8': {
-    why: `<p>If Cleveland Fed's 0.76% reading for March holds for April (same tariff regime, same energy pressure), the probability of exceeding 0.8% is about 41% — simply because 0.76% is close to 0.8% and there's variance in the monthly reading.</p>
-          <p>The market gives only 17% odds. This is more speculative than the 0.7% bet — it requires above-average tariff pass-through — but the data supports it more than the market does.</p>`,
-    sources: ['Cleveland Fed CPI Nowcast','BLS Import Price Index'],
-    settles: 'May 12, 2026 — BLS April CPI release',
-  },
-  'KXECONSTATCPI-26APR-T0.6': {
-    why: `<p><strong>Bracket market — YES if April CPI prints between 0.55% and 0.64%.</strong></p>
-          <p>The market gives only <strong>6%</strong> to the 0.6% bucket. Our model, anchored to Cleveland Fed's confirmed March reading of <strong>0.76% MoM</strong>, gives <strong>14.9%</strong> to this range — more than twice the market's price.</p>
-          <p>Crucially: <strong>73% of our model's probability mass is above 0.65%</strong>, which Kalshi covers with no market. This bet is our only available YES bet in the CPI series; the bulk of our edge lives in a bucket that simply doesn't exist on Kalshi yet.</p>
-          <p>If you think April CPI will be hot (which the data strongly suggests), the correct plays are: <em>NO on low buckets (0.3, 0.4)</em> and <em>YES on 0.6</em> as the closest available proxy.</p>
-          <div style="background:#f0fdf4;border-radius:6px;padding:10px;margin-top:8px;font-size:13px"><strong>EV math:</strong> Buy YES at 9¢. Win = 91¢ × (1−7% fee) = 84.6¢. Model P = 14.9%. EV = 14.9% × 84.6¢ − 85.1% × 9¢ = +4.9¢/$ = <strong>+$0.49 per $10</strong></div>`,
-    sources: ['Cleveland Fed CPI Nowcast (0.76%)','BLS Import Price Index (+1.27%)'],
-    settles: 'May 12, 2026 — BLS April CPI release',
-  },
-  'KXECONSTATCPI-26MAY-T0.2': {
-    why: `<p><strong>Bracket market — AGAINST (NO) — YES resolves only if May CPI is exactly 0.2% (0.15–0.24% range).</strong></p>
-          <p>The market prices this at a remarkable <strong>26%</strong> — the single most popular bucket for May CPI. This reflects a market view that inflation sharply reverses from the current tariff-driven surge.</p>
-          <p>Our model: May CPI is the report for April economic activity. If April is month 2 under the tariff regime and Cleveland Fed's March reading was 0.76%, the probability of May CPI falling all the way to 0.2% is approximately <strong>2.3%</strong>.</p>
-          <p>To justify 26%, you'd need to believe:</p>
-          <ul style="margin:8px 0 8px 16px;line-height:1.7">
-            <li>Oil/energy prices collapse</li>
-            <li>Tariff pass-through is much lower than March suggests</li>
-            <li>A major economic slowdown hits consumer spending</li>
-          </ul>
-          <p>Possible, but 26% is way too high. This is our highest-EV bet right now at <strong>+$1.91 per $10</strong>.</p>`,
-    sources: ['Cleveland Fed CPI Nowcast (March, 0.76%)','BLS Import Price Index (+1.27% MoM)'],
-    settles: 'June 10, 2026 — BLS May CPI (April data) release',
-  },
-  'KXECONSTATCPI-26MAY-T0.6': {
-    why: `<p><strong>Bracket market — YES if May CPI prints between 0.55% and 0.64%.</strong></p>
-          <p>This is the forward-looking version of our April T0.6 bet. The market gives only <strong>5%</strong> to this bracket for May CPI. Our model gives <strong>17.5%</strong> — 3.5× higher.</p>
-          <p>This assumes tariff inflation persists into month 2 (May CPI reflects April economic activity) with some modest normalization. Even with supply chain adjustment, a 0.6% print is plausible given the current environment.</p>
-          <p><strong>⚠️ Higher uncertainty:</strong> This is a 75-day forward forecast. We don't have Cleveland Fed's April nowcast yet. Confidence is 5/10.</p>
-          <div style="background:#f0fdf4;border-radius:6px;padding:10px;margin-top:8px;font-size:13px"><strong>EV math:</strong> Buy YES at 10¢. Win = 90¢ × 0.93 = 83.7¢. Model P = 17.5%. EV = 17.5% × 83.7¢ − 82.5% × 10¢ = +$0.64 per $10</div>`,
-    sources: ['Cleveland Fed CPI Nowcast (March)','BLS Import Price Index','BLS PPI Finished Goods'],
-    settles: 'June 10, 2026 — BLS May CPI release',
+  // ── CPI bets (all NO — exact-bucket markets, NOT threshold markets) ──────
+  'KXECONSTATCPI-26APR-T0.4': {
+    why: `<p><strong>This is an AGAINST (NO) bet.</strong> Kalshi's CPI markets resolve YES only if CPI rounds to exactly that value — not "above it". So YES here means April CPI lands between 0.35–0.44%. We're betting it doesn't.</p>
+          <p>The Cleveland Fed nowcast (the most accurate near-term CPI predictor in the US) confirmed March 2026 CPI at <strong>0.76% MoM</strong>. April is the first full month under the new tariff regime. Tariff-driven price increases are sticky — import prices already rose <strong>+1.27% MoM</strong> and PPI rose <strong>+0.68% MoM</strong>.</p>
+          <p>Our model (skew-normal centered at 0.72%, right-skewed for tariff upside risk): <strong>96% chance April CPI exceeds 0.6%</strong>. The probability of landing exactly in the 0.35–0.44% band is approximately 0–1%.</p>
+          <p>The market prices this bucket at 23.5% — the peak of the market's distribution. The market is betting on a sharp reversion from the tariff shock. We think that's wrong.</p>
+          <p><strong>Buy NO at 78¢. Win 22¢ (net of 7% fee: 20.5¢) if CPI ≠ 0.4%. EV = 99% × 20.5¢ − 1% × 78¢ = +$2.05 per $10.</strong></p>`,
+    sources: ['Cleveland Fed CPI Nowcast','BLS Import Price Index','BLS PPI Finished Goods','BLS CPI Energy Component','EIA Gas Prices'],
+    settles: 'May 12, 2026 — BLS releases April 2026 CPI data',
   },
   'KXECONSTATCPI-26APR-T0.3': {
-    why: `<p>⚠️ <strong>This is an AGAINST (NO) bet.</strong> The KXECONSTATCPI series resolves YES only if CPI lands at <em>exactly</em> 0.3% — not "above 0.3%". Each contract is a single bucket in a probability distribution of outcomes.</p>
-          <p>The market prices this bucket at 19%. We say less than 1%. Our model (Cleveland Fed 0.76% MoM, import prices +1.27%, PPI +0.68%, first full tariff month) puts April CPI at <strong>0.76%</strong>, which rounds to <strong>0.8%</strong> — nowhere near the 0.3% bucket.</p>
-          <p>Buying NO means we collect if CPI prints anything other than exactly 0.3%. With our model centered at 0.76%, that's a high-confidence bet.</p>`,
-    sources: ['Cleveland Fed CPI Nowcast (0.76%)','BLS Import Price Index (+1.27%)','BLS PPI (+0.68%)'],
-    settles: 'May 12, 2026 — BLS April CPI release',
+    why: `<p><strong>This is an AGAINST (NO) bet.</strong> YES resolves only if April CPI rounds to exactly 0.3% (lands between 0.25–0.34%). We're betting NO.</p>
+          <p>Cleveland Fed confirmed March CPI at <strong>0.76% MoM</strong>. For April to print at 0.3%, inflation would have to more than halve in a single month — with tariffs still in full force, import prices rising, and energy costs elevated.</p>
+          <p>Our model gives less than 1% probability to the 0.3% bucket. The market prices it at 18.5%. That's an 18-fold overstatement.</p>
+          <p><strong>Buy NO at 83¢. Win 17¢ (net 15.8¢) if CPI ≠ 0.3%. EV = 99% × 15.8¢ − 1% × 83¢ = +$1.58 per $10.</strong></p>`,
+    sources: ['Cleveland Fed CPI Nowcast','BLS Import Price Index','BLS PPI Finished Goods'],
+    settles: 'May 12, 2026 — BLS releases April 2026 CPI data',
   },
-  'KXECONSTATCPI-26APR-T0.4': {
-    why: `<p>⚠️ <strong>This is an AGAINST (NO) bet.</strong> The market's single most popular KXECONSTATCPI bucket — 24% of market participants think April CPI rounds to exactly 0.4% (i.e. lands between 0.35% and 0.44%).</p>
-          <p>We disagree strongly. Our model says April CPI prints at <strong>0.76%</strong> — well above the 0.4% bucket. April is the first full month under the new tariff regime. Import prices already rose 1.27% MoM and factory input prices (PPI) rose 0.68%. The market is anchored to recent soft prints and severely underweights the tariff shock.</p>
-          <p>This is our highest-EV bet in the KXECONSTATCPI series: $1.80 expected per $10 risked.</p>`,
-    sources: ['Cleveland Fed CPI Nowcast (0.76%)','BLS Import Price Index (+1.27%)','BLS PPI (+0.68%)','Tariff shock April 2026'],
-    settles: 'May 12, 2026 — BLS April CPI release',
+  'KXECONSTATCPI-26MAY-T0.2': {
+    why: `<p><strong>This is an AGAINST (NO) bet.</strong> YES resolves only if May CPI (April's economic data, released June 10) rounds to exactly 0.2%. The market says 26% — the most popular bucket for May. We disagree strongly.</p>
+          <p>The market is pricing in a dramatic disinflation path: March ~0.9% → April ~0.4% → May ~0.2%. That's inflation essentially vanishing in two months, with tariffs still active and import prices elevated.</p>
+          <p>Our model for May CPI (tariffs still in effect, anchored to March's 0.76% reading): centered at ~0.62%. Probability of landing exactly at 0.2%: under 1%.</p>
+          <p>⚠️ <strong>Confidence is 5/10</strong> — this is 75+ days out and we don't have April's Cleveland Fed nowcast yet. If April CPI actually prints at 0.3–0.4%, this bet's thesis weakens and we should reassess.</p>
+          <p><strong>Buy NO at 71¢. Win 29¢ (net 27¢) if CPI ≠ 0.2%. EV = 99% × 27¢ − 1% × 71¢ = +$2.70 per $10.</strong></p>`,
+    sources: ['Cleveland Fed CPI Nowcast (March)','BLS Import Price Index','BLS PPI'],
+    settles: 'June 10, 2026 — BLS releases May 2026 CPI data',
+  },
+  'KXECONSTATCPI-26MAY-T0.3': {
+    why: `<p><strong>This is an AGAINST (NO) bet.</strong> YES resolves only if May CPI rounds to exactly 0.3%. Market prices it at 21%. Our model: under 1%.</p>
+          <p>Same tariff persistence thesis as the 0.2% bet — the market's soft-landing scenario requires inflation to collapse from 0.76% to 0.3% in just two months. The data doesn't support that.</p>
+          <p>⚠️ <strong>Conviction trigger: if April CPI prints below 0.5%</strong>, that's evidence the market's disinflation story is right and this bet should be reassessed.</p>
+          <p><strong>Buy NO at 76¢. Win 24¢ (net 22.3¢) if CPI ≠ 0.3%. EV = 99% × 22.3¢ − 1% × 76¢ = +$2.22 per $10.</strong></p>`,
+    sources: ['Cleveland Fed CPI Nowcast (March)','BLS Import Price Index'],
+    settles: 'June 10, 2026 — BLS releases May 2026 CPI data',
   },
   'KXGDP-26APR30-T2.5': {
     why: `<p>Three independent government trackers all say US GDP growth in Q1 2026 is around 2%:</p>
