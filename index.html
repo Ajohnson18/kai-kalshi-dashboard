@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalshi Edge Engine</title>
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --card: #F0EEE9;
+    --border: #D8D5CF;
+    --text: #1A1A1A;
+    --muted: #6B6B6B;
+    --blue: #2B5B84;
+    --green: #2D6A4F;
+    --green-lt: #D4EDE1;
+    --red: #8B2635;
+    --red-lt: #F5D6DA;
+    --yellow: #8B6914;
+    --yellow-lt: #FDF3D7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', sans-serif; font-size: 14px; }
+
+  header { background: white; border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  header h1 { font-size: 18px; font-weight: 700; color: var(--blue); letter-spacing: -0.3px; }
+  header .meta { font-size: 12px; color: var(--muted); text-align: right; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); margin-right: 5px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+  .stat-card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .stat-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 6px; }
+  .stat-card .value { font-size: 26px; font-weight: 700; color: var(--text); }
+  .stat-card .sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .stat-card.green .value { color: var(--green); }
+  .stat-card.red .value { color: var(--red); }
+  .stat-card.blue .value { color: var(--blue); }
+
+  section { margin-bottom: 32px; }
+  section h2 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  section h2 span { background: var(--blue); color: white; border-radius: 10px; padding: 1px 8px; font-size: 11px; }
+
+  table { width: 100%; border-collapse: collapse; background: white; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  thead th { background: var(--card); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--card); }
+  td { padding: 11px 14px; vertical-align: middle; }
+
+  .bet-title { font-weight: 500; color: var(--text); }
+  .bet-ticker { font-size: 11px; color: var(--muted); font-family: monospace; margin-top: 2px; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+  .badge.yes { background: var(--green-lt); color: var(--green); }
+  .badge.no  { background: var(--red-lt);   color: var(--red); }
+  .badge.live { background: var(--blue); color: white; }
+  .badge.paper { background: var(--card); color: var(--muted); border: 1px solid var(--border); }
+  .badge.won  { background: var(--green-lt); color: var(--green); }
+  .badge.lost { background: var(--red-lt);   color: var(--red); }
+
+  .ev { font-weight: 700; color: var(--green); }
+  .ev.low { color: var(--muted); font-weight: 500; }
+
+  .pnl.pos { color: var(--green); font-weight: 700; }
+  .pnl.neg { color: var(--red); font-weight: 700; }
+  .pnl.zero { color: var(--muted); }
+
+  .change.up   { color: var(--green); }
+  .change.down { color: var(--red); }
+  .change.same { color: var(--muted); }
+
+  .conf { display: inline-flex; align-items: center; gap: 2px; }
+  .conf-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .conf-dot.fill { background: var(--blue); }
+  .conf-dot.empty { background: var(--border); }
+
+  .closes { font-size: 12px; color: var(--muted); }
+  .closes .days { font-weight: 600; color: var(--text); }
+
+  .sources-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .source-card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+  .source-card .src-name { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+  .source-card .src-value { font-size: 20px; font-weight: 700; margin: 4px 0; }
+  .source-card .src-meta { font-size: 11px; color: var(--muted); }
+  .source-card.up .src-value { color: var(--red); }
+  .source-card.down .src-value { color: var(--green); }
+  .source-card.neutral .src-value { color: var(--blue); }
+
+  .consensus-bar { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+  .consensus-bar .label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .bar-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--red); border-radius: 4px; transition: width 0.5s; }
+  .consensus-bar .direction { font-size: 16px; font-weight: 700; margin-top: 8px; }
+  .direction.inflationary { color: var(--red); }
+  .direction.deflationary { color: var(--green); }
+
+  .loading { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
+  .error { text-align: center; padding: 20px; color: var(--red); font-size: 13px; background: var(--red-lt); border-radius: 8px; margin: 12px 0; }
+  .empty { text-align: center; padding: 24px; color: var(--muted); font-style: italic; font-size: 13px; }
+
+  .link { color: var(--blue); text-decoration: none; font-size: 12px; }
+  .link:hover { text-decoration: underline; }
+
+  @media (max-width: 700px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .sources-grid { grid-template-columns: repeat(2, 1fr); }
+    thead th:nth-child(n+4) { display: none; }
+    td:nth-child(n+4) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>📈 Kalshi Edge Engine</h1>
+  </div>
+  <div class="meta">
+    <div><span class="dot"></span>Live data from Supabase</div>
+    <div id="last-updated">Loading...</div>
+  </div>
+</header>
+
+<main>
+  <!-- Summary stats -->
+  <div class="summary-grid">
+    <div class="stat-card blue">
+      <div class="label">Open Bets</div>
+      <div class="value" id="stat-open">—</div>
+      <div class="sub" id="stat-live-count">—</div>
+    </div>
+    <div class="stat-card" id="stat-pnl-card">
+      <div class="label">Total P&L</div>
+      <div class="value" id="stat-pnl">$0.00</div>
+      <div class="sub" id="stat-capital">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Resolved</div>
+      <div class="value" id="stat-resolved">—</div>
+      <div class="sub" id="stat-winrate">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Top EV Bet</div>
+      <div class="value green" id="stat-top-ev">—</div>
+      <div class="sub" id="stat-top-name">—</div>
+    </div>
+  </div>
+
+  <!-- Inflation consensus -->
+  <section>
+    <h2>Inflation Signal</h2>
+    <div class="consensus-bar">
+      <div class="label">Signal weight: <span id="inf-up">—</span> inflationary vs <span id="inf-down">—</span> deflationary</div>
+      <div class="bar-track"><div class="bar-fill" id="inf-bar" style="width:0%"></div></div>
+      <div class="direction" id="inf-direction">Loading...</div>
+    </div>
+
+    <div class="sources-grid" id="sources-grid">
+      <div class="loading">Loading sources...</div>
+    </div>
+  </section>
+
+  <!-- Live bets -->
+  <section id="live-section" style="display:none">
+    <h2>Live Bets <span id="live-count">0</span></h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Bet</th>
+          <th>Side</th>
+          <th>Staked</th>
+          <th>Entry</th>
+          <th>Current</th>
+          <th>MTM P&L</th>
+          <th>EV / $10</th>
+          <th>Closes</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody id="live-bets-body"></tbody>
+    </table>
+  </section>
+
+  <!-- Paper bets -->
+  <section>
+    <h2>Tracked Bets <span id="paper-count">0</span></h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Bet</th>
+          <th>Side</th>
+          <th>Model P</th>
+          <th>Market</th>
+          <th>EV / $10</th>
+          <th>Confidence</th>
+          <th>Closes</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody id="paper-bets-body">
+        <tr><td colspan="8" class="loading">Loading bets...</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Performance -->
+  <section>
+    <h2>Performance by Category</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Total</th>
+          <th>Resolved</th>
+          <th>Wins</th>
+          <th>Win Rate</th>
+          <th>Real P&L</th>
+          <th>Paper P&L / $10</th>
+        </tr>
+      </thead>
+      <tbody id="perf-body">
+        <tr><td colspan="7" class="loading">Loading...</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<script>
+const SUPABASE_URL = 'https://ooqppogvabchhvtgqnsl.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vcXBwb2d2YWJjaGh2dGdxbnNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NTQyMzYsImV4cCI6MjA5MDEzMDIzNn0.kUeOwuj0iDfT_sd7FXH51tumfUgLX6S4XEJUVHdors0';
+
+const supabase = (table) => ({
+  select: async (cols='*') => {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=${cols}`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    return r.json();
+  }
+});
+
+const esc = s => String(s ?? '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fmt$ = v => v == null ? '—' : (v >= 0 ? '+$' : '-$') + Math.abs(v).toFixed(2);
+const fmtPct = v => v == null ? '—' : v + '%';
+const fmtDate = d => { if (!d) return '—'; const dt = new Date(d); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}); };
+const daysLeft = d => { if (!d) return null; const diff = Math.ceil((new Date(d) - new Date()) / 86400000); return diff; };
+
+function kalshiUrl(ticker) {
+  const series = ticker.split('-')[0].toLowerCase();
+  const event  = ticker.split('-').slice(0,-1).join('-').toLowerCase();
+  return `https://kalshi.com/markets/${series}/${event}`;
+}
+
+function confDots(n) {
+  return Array.from({length:10},(_,i)=>
+    `<span class="conf-dot ${i<n?'fill':'empty'}"></span>`
+  ).join('');
+}
+
+function pnlClass(v) {
+  if (v == null || v === 0) return 'zero';
+  return v > 0 ? 'pos' : 'neg';
+}
+
+// ── Render sources ──────────────────────────────────────────────────────
+async function renderSources() {
+  const data = await supabase('source_readings').select('source,metric,value,direction,period,fetched_at');
+  if (!Array.isArray(data)) return;
+
+  // Get latest per source+metric
+  const latest = {};
+  data.forEach(r => {
+    const k = r.source + '|' + r.metric;
+    if (!latest[k] || r.fetched_at > latest[k].fetched_at) latest[k] = r;
+  });
+
+  const sources = [
+    { key: 'Cleveland Fed|cpi_mom',     label: 'CPI MoM', unit: '%', note: 'Cleveland Fed Nowcast' },
+    { key: 'Cleveland Fed|cpi_yoy',     label: 'CPI YoY', unit: '%', note: 'Cleveland Fed Nowcast' },
+    { key: 'BLS Import Prices|import_pct', label: 'Import Prices', unit: '% MoM', note: 'BLS — tariff signal' },
+    { key: 'BLS PPI|ppi_pct',           label: 'PPI',     unit: '% MoM', note: 'Producer Price Index' },
+    { key: 'BLS CPI Energy|energy_cpi_pct', label: 'Energy CPI', unit: '% MoM', note: 'BLS Energy Component' },
+    { key: 'EIA Gas|avg_price_usd',     label: 'Gas Price', unit: '$/gal', note: 'EIA Weekly' },
+    { key: 'FRED TIPS 5yr|breakeven_pct', label: 'TIPS 5yr', unit: '%', note: 'Bond market inflation bet' },
+    { key: 'Michigan Survey|expect_1yr_pct', label: 'Consumer Expect.', unit: '%', note: 'Michigan 1yr Survey' },
+    { key: 'Atlanta Fed GDPNow|gdp_pct', label: 'GDPNow', unit: '%', note: 'Atlanta Fed Q1 2026' },
+    { key: 'NY Fed Nowcast|gdp_pct',    label: 'NY Fed Nowcast', unit: '%', note: 'NY Fed Q1 2026' },
+    { key: 'FRED WTI Oil|wti_usd',      label: 'WTI Crude', unit: '$/bbl', note: 'FRED Daily' },
+    { key: 'FRED Unemployment|rate_pct',label: 'Unemployment', unit: '%', note: 'FRED Monthly' },
+  ];
+
+  let upW = 0, downW = 0;
+  const cards = sources.map(s => {
+    const r = latest[s.key];
+    if (!r) return '';
+    const dir = r.direction;
+    const cls = dir === 'UP' ? 'up' : dir === 'DOWN' ? 'down' : 'neutral';
+    const arrow = dir === 'UP' ? '↑' : dir === 'DOWN' ? '↓' : '';
+    if (dir === 'UP') upW += 2;
+    if (dir === 'DOWN') downW += 2;
+    return `
+      <div class="source-card ${cls}">
+        <div class="src-name">${esc(s.label)}</div>
+        <div class="src-value">${arrow} ${r.value}${s.unit}</div>
+        <div class="src-meta">${esc(s.note)} · ${esc(r.period || '')}</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('sources-grid').innerHTML = cards || '<div class="empty">No source data yet</div>';
+
+  // Consensus bar
+  const total = upW + downW;
+  const upPct = total > 0 ? Math.round(upW / total * 100) : 50;
+  document.getElementById('inf-bar').style.width = upPct + '%';
+  document.getElementById('inf-up').textContent = upW;
+  document.getElementById('inf-down').textContent = downW;
+  const dir = upW > downW ? 'INFLATIONARY' : downW > upW ? 'DEFLATIONARY' : 'MIXED';
+  const dirEl = document.getElementById('inf-direction');
+  dirEl.textContent = dir;
+  dirEl.className = 'direction ' + dir.toLowerCase();
+}
+
+// ── Render bets ─────────────────────────────────────────────────────────
+async function renderBets() {
+  const bets = await supabase('open_bets').select('*');
+  if (!Array.isArray(bets)) {
+    document.getElementById('paper-bets-body').innerHTML = '<tr><td colspan="8" class="error">Failed to load bets</td></tr>';
+    return;
+  }
+
+  const live  = bets.filter(b => b.status === 'LIVE');
+  const paper = bets.filter(b => b.status === 'PAPER').sort((a,b) => parseFloat(b.ev_per_10) - parseFloat(a.ev_per_10));
+
+  // Stats
+  document.getElementById('stat-open').textContent = bets.length;
+  document.getElementById('stat-live-count').textContent = live.length + ' live · ' + paper.length + ' paper';
+
+  const totalStaked = live.reduce((s,b) => s + parseFloat(b.size_dollars||0), 0);
+  document.getElementById('stat-capital').textContent = totalStaked > 0 ? '$' + totalStaked.toFixed(2) + ' at risk' : 'No live bets yet';
+
+  const topBet = paper[0];
+  if (topBet) {
+    document.getElementById('stat-top-ev').textContent = '$' + parseFloat(topBet.ev_per_10).toFixed(2) + '/10';
+    document.getElementById('stat-top-name').textContent = topBet.title?.substring(0,35) || topBet.ticker;
+  }
+
+  // Live bets section
+  if (live.length > 0) {
+    document.getElementById('live-section').style.display = 'block';
+    document.getElementById('live-count').textContent = live.length;
+    document.getElementById('live-bets-body').innerHTML = live.map(b => {
+      const d = daysLeft(b.closes);
+      const sideClass = b.side === 'YES' ? 'yes' : 'no';
+      const evNum = parseFloat(b.ev_per_10);
+      return `<tr>
+        <td><div class="bet-title">${esc(b.title?.substring(0,45) || b.ticker)}</div><div class="bet-ticker">${esc(b.ticker)}</div></td>
+        <td><span class="badge ${sideClass}">${b.side}</span></td>
+        <td>$${parseFloat(b.size_dollars||0).toFixed(0)}</td>
+        <td>${parseFloat(b.actual_entry||b.entry_price||0)*100 .toFixed(1)}¢</td>
+        <td>${parseFloat(b.mkt_mid||0)*100 .toFixed(1)}¢</td>
+        <td class="pnl ${pnlClass(0)}">—</td>
+        <td class="ev">${evNum > 0 ? '+$'+evNum.toFixed(2) : '$'+evNum.toFixed(2)}</td>
+        <td class="closes"><span class="days">${d != null ? d+'d' : '—'}</span> ${fmtDate(b.closes)}</td>
+        <td><a class="link" href="${kalshiUrl(b.ticker)}" target="_blank">Bet →</a></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Paper bets
+  document.getElementById('paper-count').textContent = paper.length;
+  document.getElementById('paper-bets-body').innerHTML = paper.length === 0
+    ? '<tr><td colspan="8" class="empty">No tracked bets</td></tr>'
+    : paper.map(b => {
+        const d = daysLeft(b.closes);
+        const sideClass = b.side === 'YES' ? 'yes' : 'no';
+        const evNum = parseFloat(b.ev_per_10);
+        const evClass = evNum >= 3 ? 'ev' : evNum >= 1 ? 'ev' : 'ev low';
+        const modelPct = Math.round(parseFloat(b.model_p||0)*100);
+        const mktPct   = Math.round(parseFloat(b.mkt_mid||0)*100);
+        const conf = parseInt(b.confidence||0);
+        return `<tr>
+          <td><div class="bet-title">${esc(b.title?.substring(0,45) || b.ticker)}</div><div class="bet-ticker">${esc(b.ticker)}</div></td>
+          <td><span class="badge ${sideClass}">${b.side}</span></td>
+          <td><strong>${modelPct}%</strong></td>
+          <td>${mktPct}%</td>
+          <td class="${evClass}">+$${evNum.toFixed(2)}</td>
+          <td><div class="conf">${confDots(conf)}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${conf}/10</div></td>
+          <td class="closes"><span class="days">${d != null ? d+'d' : '—'}</span> ${fmtDate(b.closes)}</td>
+          <td><a class="link" href="${kalshiUrl(b.ticker)}" target="_blank">Bet →</a></td>
+        </tr>`;
+      }).join('');
+}
+
+// ── Render performance ──────────────────────────────────────────────────
+async function renderPerformance() {
+  const perf = await supabase('bet_performance').select('*');
+  if (!Array.isArray(perf) || !perf.length) {
+    document.getElementById('perf-body').innerHTML = '<tr><td colspan="7" class="empty">No resolved bets yet — first settle April 30</td></tr>';
+    document.getElementById('stat-resolved').textContent = '0';
+    document.getElementById('stat-winrate').textContent = 'No results yet';
+    document.getElementById('stat-pnl').textContent = '$0.00';
+    return;
+  }
+
+  const totalResolved = perf.reduce((s,p) => s + parseInt(p.resolved||0), 0);
+  const totalWins     = perf.reduce((s,p) => s + parseInt(p.wins||0), 0);
+  const totalPnl      = perf.reduce((s,p) => s + parseFloat(p.real_pnl||0), 0);
+  const totalPaper    = perf.reduce((s,p) => s + parseFloat(p.paper_pnl_per10||0), 0);
+
+  document.getElementById('stat-resolved').textContent = totalResolved;
+  document.getElementById('stat-winrate').textContent = totalResolved > 0 ? Math.round(totalWins/totalResolved*100) + '% win rate' : 'No results yet';
+
+  const pnlEl = document.getElementById('stat-pnl');
+  pnlEl.textContent = fmt$(totalPnl);
+  pnlEl.className = 'value ' + (totalPnl > 0 ? 'green' : totalPnl < 0 ? 'red' : '');
+  document.getElementById('stat-pnl-card').className = 'stat-card ' + (totalPnl > 0 ? 'green' : totalPnl < 0 ? 'red' : '');
+
+  document.getElementById('perf-body').innerHTML = perf.map(p => {
+    const wr = parseFloat(p.win_rate_pct||0);
+    const realPnl = parseFloat(p.real_pnl||0);
+    const paperPnl = parseFloat(p.paper_pnl_per10||0);
+    return `<tr>
+      <td><strong>${esc(p.category)}</strong></td>
+      <td>${p.total}</td>
+      <td>${p.resolved}</td>
+      <td>${p.wins}</td>
+      <td>${p.resolved > 0 ? '<strong>'+wr+'%</strong>' : '—'}</td>
+      <td class="pnl ${pnlClass(realPnl)}">${p.live > 0 ? fmt$(realPnl) : '—'}</td>
+      <td class="pnl ${pnlClass(paperPnl)}">${p.resolved > 0 ? fmt$(paperPnl) : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Main ────────────────────────────────────────────────────────────────
+async function refresh() {
+  document.getElementById('last-updated').textContent = 'Updating...';
+  await Promise.all([renderSources(), renderBets(), renderPerformance()]);
+  document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+}
+
+refresh();
+setInterval(refresh, 5 * 60 * 1000); // auto-refresh every 5 min
+</script>
+</body>
+</html>
