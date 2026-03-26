@@ -211,6 +211,20 @@ const BET_DATA = {
     sources: ['Cleveland Fed CPI Nowcast (March)','BLS Import Price Index'],
     settles: 'June 10, 2026 — BLS May CPI release',
   },
+  'KXECONSTATCPI-26APR-T0.3': {
+    why: `<p>⚠️ <strong>This is an AGAINST (NO) bet.</strong> The KXECONSTATCPI series resolves YES only if CPI lands at <em>exactly</em> 0.3% — not "above 0.3%". Each contract is a single bucket in a probability distribution of outcomes.</p>
+          <p>The market prices this bucket at 19%. We say less than 1%. Our model (Cleveland Fed 0.76% MoM, import prices +1.27%, PPI +0.68%, first full tariff month) puts April CPI at <strong>0.76%</strong>, which rounds to <strong>0.8%</strong> — nowhere near the 0.3% bucket.</p>
+          <p>Buying NO means we collect if CPI prints anything other than exactly 0.3%. With our model centered at 0.76%, that's a high-confidence bet.</p>`,
+    sources: ['Cleveland Fed CPI Nowcast (0.76%)','BLS Import Price Index (+1.27%)','BLS PPI (+0.68%)'],
+    settles: 'May 12, 2026 — BLS April CPI release',
+  },
+  'KXECONSTATCPI-26APR-T0.4': {
+    why: `<p>⚠️ <strong>This is an AGAINST (NO) bet.</strong> The market's single most popular KXECONSTATCPI bucket — 24% of market participants think April CPI rounds to exactly 0.4% (i.e. lands between 0.35% and 0.44%).</p>
+          <p>We disagree strongly. Our model says April CPI prints at <strong>0.76%</strong> — well above the 0.4% bucket. April is the first full month under the new tariff regime. Import prices already rose 1.27% MoM and factory input prices (PPI) rose 0.68%. The market is anchored to recent soft prints and severely underweights the tariff shock.</p>
+          <p>This is our highest-EV bet in the KXECONSTATCPI series: $1.80 expected per $10 risked.</p>`,
+    sources: ['Cleveland Fed CPI Nowcast (0.76%)','BLS Import Price Index (+1.27%)','BLS PPI (+0.68%)','Tariff shock April 2026'],
+    settles: 'May 12, 2026 — BLS April CPI release',
+  },
   'KXGDP-26APR30-T2.5': {
     why: `<p>Three independent government trackers all say US GDP growth in Q1 2026 is around 2%:</p>
           <ul style="margin:8px 0 8px 16px;line-height:1.8">
