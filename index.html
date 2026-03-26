@@ -157,6 +157,12 @@
     <div class="stat"><div class="n g" id="s3">—</div><div class="l">Best EV / $10</div></div>
     <div class="stat"><div class="n" id="s4">—</div><div class="l">Data signals ↑</div></div>
   </div>
+  <!-- Settling soon alert -->
+  <div id="settling-banner" style="display:none;background:#fff8e1;border:1.5px solid #f59e0b;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+    <div style="font-size:13px;font-weight:700;color:#b45309">⏰ Settling soon</div>
+    <div id="settling-list" style="margin-top:6px;font-size:12px;color:#666;line-height:1.8"></div>
+  </div>
+
   <div class="sec" id="live-title" style="display:none">💰 Live — Real Money</div>
   <div id="live-bets"></div>
   <div class="sec">🎯 All Bets <span style="color:#bbb;font-weight:400;text-transform:none;font-size:12px">— click any card for full breakdown</span></div>
@@ -183,24 +189,35 @@ const kalshiUrl = t => `https://kalshi.com/markets/${t.split('-')[0].toLowerCase
 const CAT = {economy:'ec',sports:'sp',politics:'po',companies:'co'};
 
 // ── Per-bet data ────────────────────────────────────────────────────────
+// NAMING KEY: KXECONSTATCPI-26APR = "released in April" = MARCH CPI DATA (settles April 10)
+//             KXECONSTATCPI-26MAY = "released in May"   = APRIL CPI DATA (settles May 12)
+//             These are BUCKET markets: resolve YES if CPI rounds to exactly that value
 const BET_DATA = {
-  // ── CPI bets (all NO — exact-bucket markets, NOT threshold markets) ──────
+  // ── MARCH CPI bets — settle April 10 ────────────────────────────────────
+  'KXECONSTATCPI-26APR-T0.8': {
+    why: `<p><strong>This is a FOR IT (YES) bet.</strong> This market asks: will March 2026 CPI month-over-month round to exactly <strong>0.8%</strong>? (i.e., will the actual reading land between 0.755% and 0.844%?)</p>
+          <p>The Cleveland Fed CPI Nowcast — the most accurate near-term inflation predictor — has March at <strong>0.76% MoM</strong>. BLS reports to one decimal: 0.76% rounds to <strong>0.8%</strong> (since 0.76 > 0.755 threshold).</p>
+          <p>The market is pricing the most likely bucket at 0.9% (33% chance). We think Cleveland Fed's 0.76% reading is more reliable than the market's consensus. The 0.8% bucket is underpriced at 27%.</p>
+          <p>⚠️ <strong>Thin margin:</strong> if the actual reading is 0.745% or below, BLS rounds to 0.7% and we lose. This is the main risk.</p>
+          <p><strong>Buy YES at 27¢. Win 73¢ (net 68¢) if March CPI = 0.8%. EV ≈ 40% × 68¢ − 60% × 27¢ = +$1.10 per $10.</strong></p>`,
+    sources: ['Cleveland Fed CPI Nowcast','BLS Import Price Index','BLS PPI Finished Goods'],
+    settles: 'April 10, 2026 — BLS releases March 2026 CPI data',
+  },
   'KXECONSTATCPI-26APR-T0.4': {
-    why: `<p><strong>This is an AGAINST (NO) bet.</strong> Kalshi's CPI markets resolve YES only if CPI rounds to exactly that value — not "above it". So YES here means April CPI lands between 0.35–0.44%. We're betting it doesn't.</p>
-          <p>The Cleveland Fed nowcast (the most accurate near-term CPI predictor in the US) confirmed March 2026 CPI at <strong>0.76% MoM</strong>. April is the first full month under the new tariff regime. Tariff-driven price increases are sticky — import prices already rose <strong>+1.27% MoM</strong> and PPI rose <strong>+0.68% MoM</strong>.</p>
-          <p>Our model (skew-normal centered at 0.72%, right-skewed for tariff upside risk): <strong>96% chance April CPI exceeds 0.6%</strong>. The probability of landing exactly in the 0.35–0.44% band is approximately 0–1%.</p>
-          <p>The market prices this bucket at 23.5% — the peak of the market's distribution. The market is betting on a sharp reversion from the tariff shock. We think that's wrong.</p>
-          <p><strong>Buy NO at 78¢. Win 22¢ (net of 7% fee: 20.5¢) if CPI ≠ 0.4%. EV = 99% × 20.5¢ − 1% × 78¢ = +$2.05 per $10.</strong></p>`,
+    why: `<p><strong>This is an AGAINST (NO) bet on the March CPI bucket market.</strong> YES resolves only if March CPI rounds to exactly 0.4% (lands between 0.355–0.444%). We're betting it doesn't — and landing at 0.4% with Cleveland Fed saying 0.76% would require the nowcast to be off by 90%.</p>
+          <p>The Cleveland Fed nowcast has March CPI at <strong>0.76% MoM</strong>. Import prices rose <strong>+1.27% MoM</strong>, PPI rose <strong>+0.68% MoM</strong>, and energy CPI hit <strong>+1.65% MoM</strong>. All three are upstream indicators that flow into CPI with a short lag.</p>
+          <p>The market prices the 0.4% bucket at 24%. The market's own peak is at 0.9% (32%). A 0.4% reading would require all those supply-side pressures to somehow vanish — extremely unlikely.</p>
+          <p><strong>Buy NO at 76¢. Win 24¢ (net 22¢) if CPI ≠ 0.4%. EV = 99% × 22¢ − 1% × 76¢ = +$2.05 per $10.</strong></p>`,
     sources: ['Cleveland Fed CPI Nowcast','BLS Import Price Index','BLS PPI Finished Goods','BLS CPI Energy Component','EIA Gas Prices'],
-    settles: 'May 12, 2026 — BLS releases April 2026 CPI data',
+    settles: 'April 10, 2026 — BLS releases March 2026 CPI data',
   },
   'KXECONSTATCPI-26APR-T0.3': {
-    why: `<p><strong>This is an AGAINST (NO) bet.</strong> YES resolves only if April CPI rounds to exactly 0.3% (lands between 0.25–0.34%). We're betting NO.</p>
-          <p>Cleveland Fed confirmed March CPI at <strong>0.76% MoM</strong>. For April to print at 0.3%, inflation would have to more than halve in a single month — with tariffs still in full force, import prices rising, and energy costs elevated.</p>
-          <p>Our model gives less than 1% probability to the 0.3% bucket. The market prices it at 18.5%. That's an 18-fold overstatement.</p>
+    why: `<p><strong>This is an AGAINST (NO) bet on the March CPI bucket market.</strong> YES resolves only if March CPI rounds to exactly 0.3% (lands between 0.255–0.344%). We're betting NO.</p>
+          <p>Cleveland Fed confirmed March CPI at <strong>0.76% MoM</strong>. The Kalshi market's own consensus has the 0.9% bucket as most likely (32%). Even the market doesn't believe 0.3% is plausible — yet prices it at 18%.</p>
+          <p>For March to print 0.3%, the Cleveland Fed nowcast would need to be wrong by ~0.46 percentage points. That would be a historically extreme miss for the Fed's own tracking model.</p>
           <p><strong>Buy NO at 83¢. Win 17¢ (net 15.8¢) if CPI ≠ 0.3%. EV = 99% × 15.8¢ − 1% × 83¢ = +$1.58 per $10.</strong></p>`,
     sources: ['Cleveland Fed CPI Nowcast','BLS Import Price Index','BLS PPI Finished Goods'],
-    settles: 'May 12, 2026 — BLS releases April 2026 CPI data',
+    settles: 'April 10, 2026 — BLS releases March 2026 CPI data',
   },
   'KXECONSTATCPI-26MAY-T0.2': {
     why: `<p><strong>This is an AGAINST (NO) bet.</strong> YES resolves only if May CPI (April's economic data, released June 10) rounds to exactly 0.2%. The market says 26% — the most popular bucket for May. We disagree strongly.</p>
@@ -209,15 +226,15 @@ const BET_DATA = {
           <p>⚠️ <strong>Confidence is 5/10</strong> — this is 75+ days out and we don't have April's Cleveland Fed nowcast yet. If April CPI actually prints at 0.3–0.4%, this bet's thesis weakens and we should reassess.</p>
           <p><strong>Buy NO at 71¢. Win 29¢ (net 27¢) if CPI ≠ 0.2%. EV = 99% × 27¢ − 1% × 71¢ = +$2.70 per $10.</strong></p>`,
     sources: ['Cleveland Fed CPI Nowcast (March)','BLS Import Price Index','BLS PPI'],
-    settles: 'June 10, 2026 — BLS releases May 2026 CPI data',
+    settles: 'May 12, 2026 — BLS releases April 2026 CPI data',
   },
   'KXECONSTATCPI-26MAY-T0.3': {
-    why: `<p><strong>This is an AGAINST (NO) bet.</strong> YES resolves only if May CPI rounds to exactly 0.3%. Market prices it at 21%. Our model: under 1%.</p>
-          <p>Same tariff persistence thesis as the 0.2% bet — the market's soft-landing scenario requires inflation to collapse from 0.76% to 0.3% in just two months. The data doesn't support that.</p>
-          <p>⚠️ <strong>Conviction trigger: if April CPI prints below 0.5%</strong>, that's evidence the market's disinflation story is right and this bet should be reassessed.</p>
+    why: `<p><strong>This is an AGAINST (NO) bet on the April CPI bucket market.</strong> YES resolves only if April CPI (released May 12) rounds to exactly 0.3%. Market prices it at 21%. Our model: under 1%.</p>
+          <p>Same tariff persistence thesis as the 0.2% bet — the market's soft-landing scenario requires inflation to collapse from March's 0.76% to April's 0.3% in a single month, while tariffs are still in full force. The data doesn't support that.</p>
+          <p>⚠️ <strong>Conviction trigger: if March CPI (April 10) prints below 0.5%</strong>, that's evidence the market's disinflation story is right and this bet should be reassessed.</p>
           <p><strong>Buy NO at 76¢. Win 24¢ (net 22.3¢) if CPI ≠ 0.3%. EV = 99% × 22.3¢ − 1% × 76¢ = +$2.22 per $10.</strong></p>`,
     sources: ['Cleveland Fed CPI Nowcast (March)','BLS Import Price Index'],
-    settles: 'June 10, 2026 — BLS releases May 2026 CPI data',
+    settles: 'May 12, 2026 — BLS releases April 2026 CPI data',
   },
   'KXGDP-26APR30-T2.5': {
     why: `<p>Three independent government trackers all say US GDP growth in Q1 2026 is around 2%:</p>
@@ -784,6 +801,25 @@ async function refresh() {
     ['Cleveland Fed|cpi_mom','BLS Import Prices|import_pct','BLS PPI|ppi_pct','BLS CPI Energy|energy_cpi_pct','EIA Gas|avg_price_usd'].forEach(k=>{if(latest[k]?.direction==='UP')upSig++;});
   }
   document.getElementById('s4').textContent = upSig+'/5';
+
+  // Settling soon banner (next 14 days)
+  const today = new Date(); today.setHours(0,0,0,0);
+  const soon = bets.filter(b => {
+    if (!b.closes) return false;
+    const d = new Date(b.closes); d.setHours(0,0,0,0);
+    return (d - today) / 86400000 <= 14;
+  }).sort((a,b) => new Date(a.closes) - new Date(b.closes));
+  const settlingBanner = document.getElementById('settling-banner');
+  const settlingList   = document.getElementById('settling-list');
+  if (soon.length) {
+    settlingBanner.style.display = 'block';
+    settlingList.innerHTML = soon.map(b => {
+      const d = Math.ceil((new Date(b.closes) - today) / 86400000);
+      return `<span style="margin-right:16px">📅 <strong>${b.ticker}</strong> ${b.side} — closes in <strong>${d} day${d===1?'':'s'}</strong></span>`;
+    }).join('<br>');
+  } else {
+    settlingBanner.style.display = 'none';
+  }
 
   // Render cards
   const live  = bets.filter(b=>b.status==='LIVE');
