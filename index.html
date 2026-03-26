@@ -197,18 +197,36 @@ const BET_DATA = {
     sources: ['Cleveland Fed CPI Nowcast','BLS Import Price Index'],
     settles: 'May 12, 2026 — BLS April CPI release',
   },
-  'KXCPI-26MAY-T0.5': {
-    why: `<p>We're extrapolating March's Cleveland Fed reading (0.76%) forward to May (April data). This is a one-step-ahead forecast, not a confirmed reading. However, import prices, PPI, and energy costs are all trending up — suggesting the tariff inflation won't be a one-month spike.</p>
-          <p>⚠️ <strong>Note:</strong> Cleveland Fed hasn't published an April nowcast yet. This is model extrapolation. The March data is our anchor, but April-specific confirmation is needed before raising confidence on this bet.</p>
-          <p>Market prices 22%. Our model says 94%. The gap is the tariff persistence thesis.</p>`,
-    sources: ['Cleveland Fed CPI Nowcast (March)','BLS Import Price Index','BLS PPI'],
-    settles: 'June 10, 2026 — BLS May CPI release (April data)',
+  'KXECONSTATCPI-26APR-T0.6': {
+    why: `<p><strong>Bracket market — YES if April CPI prints between 0.55% and 0.64%.</strong></p>
+          <p>The market gives only <strong>6%</strong> to the 0.6% bucket. Our model, anchored to Cleveland Fed's confirmed March reading of <strong>0.76% MoM</strong>, gives <strong>14.9%</strong> to this range — more than twice the market's price.</p>
+          <p>Crucially: <strong>73% of our model's probability mass is above 0.65%</strong>, which Kalshi covers with no market. This bet is our only available YES bet in the CPI series; the bulk of our edge lives in a bucket that simply doesn't exist on Kalshi yet.</p>
+          <p>If you think April CPI will be hot (which the data strongly suggests), the correct plays are: <em>NO on low buckets (0.3, 0.4)</em> and <em>YES on 0.6</em> as the closest available proxy.</p>
+          <div style="background:#f0fdf4;border-radius:6px;padding:10px;margin-top:8px;font-size:13px"><strong>EV math:</strong> Buy YES at 9¢. Win = 91¢ × (1−7% fee) = 84.6¢. Model P = 14.9%. EV = 14.9% × 84.6¢ − 85.1% × 9¢ = +4.9¢/$ = <strong>+$0.49 per $10</strong></div>`,
+    sources: ['Cleveland Fed CPI Nowcast (0.76%)','BLS Import Price Index (+1.27%)'],
+    settles: 'May 12, 2026 — BLS April CPI release',
   },
-  'KXCPI-26MAY-T0.7': {
-    why: `<p>Same thesis as the May >0.5% bet — extending March's Cleveland Fed 0.76% reading forward with the tariff persistence assumption. If tariffs stay in place and import prices keep rising, May CPI beating 0.7% is plausible.</p>
-          <p>⚠️ <strong>Extrapolation warning:</strong> 75 days out, no Cleveland Fed April confirmation yet. Higher uncertainty than April bets.</p>
-          <p>Market: 15%. Model: 64%.</p>`,
-    sources: ['Cleveland Fed CPI Nowcast (March)','BLS Import Price Index'],
+  'KXECONSTATCPI-26MAY-T0.2': {
+    why: `<p><strong>Bracket market — AGAINST (NO) — YES resolves only if May CPI is exactly 0.2% (0.15–0.24% range).</strong></p>
+          <p>The market prices this at a remarkable <strong>26%</strong> — the single most popular bucket for May CPI. This reflects a market view that inflation sharply reverses from the current tariff-driven surge.</p>
+          <p>Our model: May CPI is the report for April economic activity. If April is month 2 under the tariff regime and Cleveland Fed's March reading was 0.76%, the probability of May CPI falling all the way to 0.2% is approximately <strong>2.3%</strong>.</p>
+          <p>To justify 26%, you'd need to believe:</p>
+          <ul style="margin:8px 0 8px 16px;line-height:1.7">
+            <li>Oil/energy prices collapse</li>
+            <li>Tariff pass-through is much lower than March suggests</li>
+            <li>A major economic slowdown hits consumer spending</li>
+          </ul>
+          <p>Possible, but 26% is way too high. This is our highest-EV bet right now at <strong>+$1.91 per $10</strong>.</p>`,
+    sources: ['Cleveland Fed CPI Nowcast (March, 0.76%)','BLS Import Price Index (+1.27% MoM)'],
+    settles: 'June 10, 2026 — BLS May CPI (April data) release',
+  },
+  'KXECONSTATCPI-26MAY-T0.6': {
+    why: `<p><strong>Bracket market — YES if May CPI prints between 0.55% and 0.64%.</strong></p>
+          <p>This is the forward-looking version of our April T0.6 bet. The market gives only <strong>5%</strong> to this bracket for May CPI. Our model gives <strong>17.5%</strong> — 3.5× higher.</p>
+          <p>This assumes tariff inflation persists into month 2 (May CPI reflects April economic activity) with some modest normalization. Even with supply chain adjustment, a 0.6% print is plausible given the current environment.</p>
+          <p><strong>⚠️ Higher uncertainty:</strong> This is a 75-day forward forecast. We don't have Cleveland Fed's April nowcast yet. Confidence is 5/10.</p>
+          <div style="background:#f0fdf4;border-radius:6px;padding:10px;margin-top:8px;font-size:13px"><strong>EV math:</strong> Buy YES at 10¢. Win = 90¢ × 0.93 = 83.7¢. Model P = 17.5%. EV = 17.5% × 83.7¢ − 82.5% × 10¢ = +$0.64 per $10</div>`,
+    sources: ['Cleveland Fed CPI Nowcast (March)','BLS Import Price Index','BLS PPI Finished Goods'],
     settles: 'June 10, 2026 — BLS May CPI release',
   },
   'KXECONSTATCPI-26APR-T0.3': {
@@ -414,6 +432,82 @@ function drawModalChart(canvasId, history) {
   return chart;
 }
 
+// ── CPI bracket distribution chart ─────────────────────────────────────
+const CPI_BRACKETS = {
+  'KXECONSTATCPI-26APR': {
+    label: 'April 2026 CPI — full probability distribution',
+    buckets: [
+      { tick:'-0.2%', mktMid:7.5,  modelP:0.0 },
+      { tick:'-0.1%', mktMid:2.0,  modelP:0.0 },
+      { tick:'0.0%',  mktMid:4.5,  modelP:0.0 },
+      { tick:'0.1%',  mktMid:8.0,  modelP:0.0 },
+      { tick:'0.2%',  mktMid:10.0, modelP:0.2 },
+      { tick:'0.3%',  mktMid:18.5, modelP:0.9 },
+      { tick:'0.4%',  mktMid:23.5, modelP:3.1 },
+      { tick:'0.5%',  mktMid:7.5,  modelP:7.9 },
+      { tick:'0.6%',  mktMid:6.0,  modelP:14.9 },
+      { tick:'>0.65%',mktMid:12.5, modelP:72.9 },
+    ]
+  },
+  'KXECONSTATCPI-26MAY': {
+    label: 'May 2026 CPI — full probability distribution',
+    buckets: [
+      { tick:'-0.2%', mktMid:3.5,  modelP:0.0 },
+      { tick:'-0.1%', mktMid:5.0,  modelP:0.1 },
+      { tick:'0.0%',  mktMid:8.5,  modelP:0.2 },
+      { tick:'0.1%',  mktMid:17.0, modelP:0.8 },
+      { tick:'0.2%',  mktMid:26.0, modelP:2.3 },
+      { tick:'0.3%',  mktMid:21.0, modelP:5.2 },
+      { tick:'0.4%',  mktMid:12.5, modelP:9.5 },
+      { tick:'0.5%',  mktMid:9.5,  modelP:14.3 },
+      { tick:'0.6%',  mktMid:5.0,  modelP:17.5 },
+      { tick:'>0.65%',mktMid:4.0,  modelP:50.0 },
+    ]
+  }
+};
+
+function drawBracketChart(canvasId, eventTicker, activeTick) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const series = eventTicker.replace(/-26(APR|MAY).*/, '-26$1');
+  const data = CPI_BRACKETS[series];
+  if (!data) return;
+
+  const labels    = data.buckets.map(b => b.tick);
+  const mktVals   = data.buckets.map(b => b.mktMid);
+  const modelVals = data.buckets.map(b => b.modelP);
+
+  // Highlight the active bucket
+  const mktColors   = data.buckets.map(b => b.tick === activeTick ? '#ef4444' : '#94a3b8');
+  const modelColors = data.buckets.map(b => b.tick === activeTick ? '#15803d' : '#86efac');
+
+  const chart = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        { label:'Market %', data:mktVals, backgroundColor:mktColors, borderRadius:3 },
+        { label:'Model %',  data:modelVals, backgroundColor:modelColors, borderRadius:3 },
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}},
+        tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+c.raw.toFixed(1)+'%'}},
+        annotation: undefined,
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:10}}},
+        y:{title:{display:true,text:'Probability %',font:{size:10}},grid:{color:'#f0ede8'},ticks:{font:{size:10},callback:v=>v+'%'}},
+      }
+    }
+  });
+  modalCharts.push(chart);
+}
+
 // ── Model probability chart ─────────────────────────────────────────────
 function drawModelChart(canvasId, modelP, mktMid, isFOR) {
   const canvas = document.getElementById(canvasId);
@@ -492,13 +586,20 @@ function openBet(ticker) {
   modalCharts.forEach(c=>c.destroy());
   modalCharts = [];
 
-  const history = histMap[ticker] || [];
-  const isFOR   = b.side === 'YES';
-  const ev      = parseFloat(b.ev_per_10||0);
-  const modelP  = parseFloat(b.model_p||0);
-  const mktMid  = parseFloat(b.mkt_mid||0);
-  const conf    = parseInt(b.confidence||0);
-  const data    = BET_DATA[ticker] || {};
+  const history    = histMap[ticker] || [];
+  const isFOR      = b.side === 'YES';
+  const ev         = parseFloat(b.ev_per_10||0);
+  const modelP     = parseFloat(b.model_p||0);
+  const mktMid     = parseFloat(b.mkt_mid||0);
+  const conf       = parseInt(b.confidence||0);
+  const data       = BET_DATA[ticker] || {};
+
+  // Detect bracket market (KXECONSTATCPI series)
+  const isBracket  = ticker.startsWith('KXECONSTATCPI');
+  const eventBase  = ticker.replace(/-T[-\d.]+$/, ''); // e.g. KXECONSTATCPI-26APR
+  // Extract active bucket tick (e.g. T0.4 → "0.4%", T-0.2 → "-0.2%")
+  const tickPart   = ticker.match(/-T([-\d.]+)$/)?.[1];
+  const activeTick = tickPart != null ? parseFloat(tickPart).toFixed(1).replace('.0','')+'%' : null;
   const srcs    = relevantSources(ticker);
 
   // Trend vs yesterday
@@ -545,12 +646,26 @@ function openBet(ticker) {
 
     <!-- Model vs market chart -->
     <div class="msec">
-      <div class="msec-title">Model vs market — probability comparison</div>
+      <div class="msec-title">${isBracket ? 'This specific bucket' : 'Probability comparison'} — market vs our model</div>
       <div class="chart-box">
         <div style="height:90px"><canvas id="mc-model"></canvas></div>
         <div style="font-size:11px;color:#999;margin-top:8px;padding:0 4px">${eqEsc(evMath)}</div>
       </div>
     </div>
+
+    <!-- CPI bracket distribution (only for bracket markets) -->
+    ${isBracket ? `<div class="msec">
+      <div class="msec-title">Full CPI probability distribution — all buckets</div>
+      <div class="chart-box">
+        <div style="height:200px"><canvas id="mc-bracket"></canvas></div>
+        <div style="font-size:11px;color:#666;margin-top:10px;padding:0 4px">
+          Red bar = the bucket this market covers (highlighted) &nbsp;·&nbsp; 
+          <span style="color:#94a3b8">■</span> Gray = market pricing &nbsp;·&nbsp;
+          <span style="color:#86efac">■</span> Green = our model &nbsp;·&nbsp;
+          The <strong>&gt;0.65%</strong> bucket has no Kalshi market (73% of model probability)
+        </div>
+      </div>
+    </div>` : ''}
 
     <!-- Why -->
     <div class="msec">
@@ -586,6 +701,7 @@ function openBet(ticker) {
   setTimeout(() => {
     drawModalChart('mc-history', history);
     drawModelChart('mc-model', modelP, mktMid, isFOR);
+    if (isBracket) drawBracketChart('mc-bracket', eventBase, activeTick);
   }, 50);
 
   document.getElementById('overlay').classList.add('open');
