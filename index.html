@@ -785,7 +785,7 @@ async function refresh() {
   document.getElementById('upd').textContent = 'Refreshing...';
 
   const [bets, history, readings, perf] = await Promise.all([
-    sb('open_bets','*'),
+    sb('bets','select=*&resolved_at=is.null&order=ev_per_10.desc.nullslast'),
     sb('price_history','ticker,recorded_at,market_mid,ev_per_10,confidence,model_p&order=recorded_at.asc'),
     sb('source_readings','source,metric,value,direction,period,fetched_at&order=fetched_at.desc'),
     sb('bet_performance','*'),
@@ -794,6 +794,14 @@ async function refresh() {
   if (!Array.isArray(bets)) return;
 
   allBets = bets;
+
+  // Derive status and days_left (bets table doesn't have these computed columns)
+  const _now = new Date();
+  allBets = allBets.map(b => ({
+    ...b,
+    status: b.size_dollars ? 'LIVE' : 'PAPER',
+    days_left: b.closes ? Math.ceil((new Date(b.closes) - _now) / 86400000) : null,
+  }));
 
   // Build maps
   if (Array.isArray(history)) {
