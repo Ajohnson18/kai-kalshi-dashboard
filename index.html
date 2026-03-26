@@ -576,16 +576,11 @@ function relevantSources(ticker) {
 function formatModelNote(note) {
   if (!note) return null;
   if (note.includes('active_bets.json')) return null;
-  // Split on double newlines
-  return note.split(/\n{2,}/).map(p => {
-    const t = p.trim();
+  return note.split(/\n\n+/).map(function(p) {
+    var t = p.trim();
     if (!t) return '';
-    // Bold the emoji section headers
-    const b = t.replace(/^([🎯📊🧠💰🗣⚠📈⚡🔍].{1,65}?:)/u, '<strong>$1</strong>');
-    // Bullets and newlines
-    const r = b.replace(/
-•/g, '<br>•').replace(/
-/g, '<br>');
+    // Newlines to <br>
+    var r = t.replace(/\n/g, '<br>');
     return '<p>' + r + '</p>';
   }).filter(Boolean).join('');
 }
