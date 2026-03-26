@@ -6,7 +6,6 @@
 <title>Kalshi Bets</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     background: #f4f3f0;
     color: #1a1a1a;
@@ -15,252 +14,125 @@
     line-height: 1.5;
   }
 
-  /* ── Header ── */
   header {
     background: #1a1a1a;
     color: white;
-    padding: 18px 28px;
+    padding: 16px 28px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
   }
-  header h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
-  .live-badge {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 12px; color: #aaa;
-  }
-  .live-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #4ade80;
-    animation: blink 2s infinite;
-  }
+  header h1 { font-size: 16px; font-weight: 700; }
+  .live-badge { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #aaa; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; animation: blink 2s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-  /* ── Layout ── */
-  .page { max-width: 900px; margin: 0 auto; padding: 28px 20px 60px; }
+  .page { max-width: 960px; margin: 0 auto; padding: 24px 18px 60px; }
 
-  /* ── Section titles ── */
-  .section-title {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #888;
-    margin-bottom: 12px;
-    margin-top: 32px;
+  .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 24px; }
+  .stat { background: white; border: 1.5px solid #e8e5e0; border-radius: 10px; padding: 14px 16px; }
+  .stat .n { font-size: 24px; font-weight: 800; color: #1a1a1a; line-height: 1; }
+  .stat .n.g { color: #15803d; }
+  .stat .l { font-size: 11px; color: #999; margin-top: 3px; }
+
+  .sec-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: #999; margin: 22px 0 10px;
   }
-  .section-title:first-child { margin-top: 0; }
 
-  /* ── Bet cards ── */
+  /* ── Bet card ── */
   .bet-card {
     background: white;
-    border-radius: 12px;
-    padding: 20px 22px;
-    margin-bottom: 10px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 16px;
-    align-items: start;
     border: 1.5px solid #e8e5e0;
-    transition: box-shadow 0.15s;
-    cursor: default;
-  }
-  .bet-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-  .bet-card.live-bet { border-color: #1a1a1a; }
-
-  .bet-left { min-width: 0; }
-  .bet-right { text-align: right; flex-shrink: 0; }
-
-  .bet-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #1a1a1a;
-    margin-bottom: 5px;
-    line-height: 1.3;
-  }
-
-  .bet-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    border-radius: 12px;
     margin-bottom: 10px;
-    align-items: center;
+    overflow: hidden;
   }
+  .bet-card.live { border-color: #1a1a1a; }
+  .bet-top { padding: 18px 20px 14px; display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: start; }
+  .bet-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: .3px; }
+  .tag.for      { background: #dcfce7; color: #15803d; }
+  .tag.against  { background: #fee2e2; color: #b91c1c; }
+  .tag.live-tag { background: #1a1a1a; color: white; }
+  .tag.paper    { background: #f0ede8; color: #999; border: 1px solid #ddd; }
+  .tag.ec { background: #eff6ff; color: #1d4ed8; }
+  .tag.sp { background: #fff7ed; color: #c2410c; }
+  .tag.po { background: #fdf4ff; color: #7e22ce; }
+  .tag.co { background: #f0fdf4; color: #15803d; }
 
-  .tag {
-    display: inline-block;
-    padding: 2px 9px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
-  .tag.for   { background: #dcfce7; color: #15803d; }
-  .tag.against { background: #fee2e2; color: #b91c1c; }
-  .tag.live  { background: #1a1a1a; color: white; }
-  .tag.paper { background: #f0ede8; color: #888; border: 1px solid #ddd; }
-  .tag.economy { background: #eff6ff; color: #1d4ed8; }
-  .tag.sports  { background: #fff7ed; color: #c2410c; }
-  .tag.politics { background: #fdf4ff; color: #7e22ce; }
-  .tag.companies { background: #f0fdf4; color: #15803d; }
-
-  .bet-reasoning {
-    font-size: 13px;
-    color: #666;
-    line-height: 1.45;
-  }
-
-  .bet-closes {
-    font-size: 12px;
-    color: #999;
-    margin-top: 8px;
-  }
-  .bet-closes strong { color: #555; }
-
-  /* Right side */
-  .ev-number {
-    font-size: 28px;
-    font-weight: 800;
-    color: #15803d;
-    line-height: 1;
-    margin-bottom: 3px;
-  }
-  .ev-label {
-    font-size: 11px;
-    color: #999;
-    text-align: right;
-  }
-  .odds-row {
-    margin-top: 10px;
-    font-size: 12px;
-    color: #999;
-    text-align: right;
-  }
-  .odds-row .site { color: #b91c1c; font-weight: 600; }
-  .odds-row .ours { color: #15803d; font-weight: 600; }
-  .conf-row {
-    margin-top: 6px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 3px;
-  }
-  .conf-pip {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #e5e5e5;
-  }
-  .conf-pip.on { background: #1a1a1a; }
-
+  .reason { font-size: 13px; color: #666; line-height: 1.45; }
+  .closes { font-size: 12px; color: #aaa; margin-top: 7px; }
+  .closes b { color: #666; }
   .bet-link {
-    display: inline-block;
-    margin-top: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #1a1a1a;
-    text-decoration: none;
-    border: 1.5px solid #1a1a1a;
-    padding: 5px 12px;
-    border-radius: 6px;
-    transition: all 0.1s;
+    display: inline-block; margin-top: 9px;
+    font-size: 12px; font-weight: 600; color: #1a1a1a;
+    text-decoration: none; border: 1.5px solid #1a1a1a;
+    padding: 4px 11px; border-radius: 6px; transition: .1s;
   }
   .bet-link:hover { background: #1a1a1a; color: white; }
 
-  /* ── Signal bar ── */
-  .signal-bar {
-    background: white;
-    border-radius: 12px;
-    padding: 20px 22px;
-    border: 1.5px solid #e8e5e0;
-    margin-bottom: 10px;
-  }
-  .signal-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .signal-label { font-size: 13px; color: #555; width: 160px; flex-shrink: 0; }
-  .signal-track {
-    flex: 1;
-    height: 6px;
-    background: #f0ede8;
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .signal-fill {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.5s;
-  }
-  .signal-fill.up   { background: #ef4444; }
-  .signal-fill.down { background: #22c55e; }
-  .signal-fill.neutral { background: #94a3b8; }
-  .signal-value { font-size: 13px; font-weight: 700; width: 70px; text-align: right; flex-shrink: 0; }
-  .signal-value.up   { color: #b91c1c; }
-  .signal-value.down { color: #15803d; }
-  .signal-value.neutral { color: #475569; }
+  /* right side */
+  .bet-right { text-align: right; flex-shrink: 0; padding-top: 2px; }
+  .ev-big { font-size: 28px; font-weight: 900; color: #15803d; line-height: 1; }
+  .ev-sub { font-size: 11px; color: #bbb; }
+  .odds { font-size: 12px; color: #aaa; margin-top: 6px; }
+  .odds .site { color: #b91c1c; font-weight: 700; }
+  .odds .ours { color: #15803d; font-weight: 700; }
+  .pips { display: flex; justify-content: flex-end; gap: 3px; margin-top: 5px; }
+  .pip { width: 8px; height: 8px; border-radius: 50%; background: #e5e5e5; }
+  .pip.on { background: #1a1a1a; }
 
-  /* ── Stats row ── */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 10px;
+  /* ── Chart area ── */
+  .bet-chart {
+    border-top: 1px solid #f0ede8;
+    padding: 12px 20px 14px;
+    background: #faf9f7;
   }
-  .stat-box {
-    background: white;
-    border: 1.5px solid #e8e5e0;
-    border-radius: 12px;
-    padding: 16px 18px;
-    text-align: center;
+  .chart-labels {
+    display: flex; justify-content: space-between;
+    font-size: 10px; color: #ccc; margin-bottom: 4px;
   }
-  .stat-box .num {
-    font-size: 26px;
-    font-weight: 800;
-    color: #1a1a1a;
-    line-height: 1;
+  .chart-legend {
+    display: flex; gap: 14px; margin-top: 8px;
   }
-  .stat-box .num.green { color: #15803d; }
-  .stat-box .desc {
-    font-size: 12px;
-    color: #999;
-    margin-top: 4px;
-  }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #999; }
+  .legend-swatch { width: 20px; height: 2px; border-radius: 2px; }
 
-  /* ── Performance row ── */
-  .perf-row {
-    background: white;
-    border: 1.5px solid #e8e5e0;
-    border-radius: 12px;
-    padding: 18px 22px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
+  /* ── Signal rows ── */
+  .signal-card { background: white; border: 1.5px solid #e8e5e0; border-radius: 10px; padding: 16px 18px; margin-bottom: 10px; }
+  .signal-title { font-size: 13px; font-weight: 700; color: #555; margin-bottom: 12px; }
+  .sig-row { display: flex; align-items: center; gap: 12px; margin-bottom: 9px; }
+  .sig-label { font-size: 12px; color: #777; width: 175px; flex-shrink: 0; }
+  .sig-track { flex: 1; height: 5px; background: #f0ede8; border-radius: 3px; overflow: hidden; }
+  .sig-fill { height: 100%; border-radius: 3px; }
+  .sig-fill.up { background: #ef4444; }
+  .sig-fill.down { background: #22c55e; }
+  .sig-fill.neutral { background: #94a3b8; }
+  .sig-val { font-size: 12px; font-weight: 700; width: 80px; text-align: right; flex-shrink: 0; }
+  .sig-val.up { color: #b91c1c; }
+  .sig-val.down { color: #15803d; }
+  .sig-val.neutral { color: #64748b; }
+
+  /* ── Perf ── */
+  .perf-card { background: white; border: 1.5px solid #e8e5e0; border-radius: 10px; padding: 14px 18px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
   .perf-cat { font-weight: 600; font-size: 14px; }
-  .perf-stats { font-size: 13px; color: #888; }
-  .perf-pnl { font-size: 18px; font-weight: 800; }
-  .perf-pnl.plus { color: #15803d; }
-  .perf-pnl.zero { color: #999; }
+  .perf-meta { font-size: 12px; color: #aaa; margin-top: 2px; }
+  .perf-pnl { font-size: 20px; font-weight: 800; }
+  .perf-pnl.g { color: #15803d; }
+  .perf-pnl.z { color: #ccc; }
 
-  /* ── Footer note ── */
-  .footer-note {
-    text-align: center;
-    font-size: 12px;
-    color: #bbb;
-    margin-top: 40px;
-  }
+  .footer { text-align: center; font-size: 11px; color: #ccc; margin-top: 36px; }
 
-  /* ── Loading / empty ── */
-  .loading-msg { padding: 32px; text-align: center; color: #bbb; font-size: 14px; }
+  .empty { padding: 28px; text-align: center; color: #ccc; font-size: 13px; font-style: italic; }
 
-  @media (max-width: 600px) {
-    .bet-card { grid-template-columns: 1fr; }
-    .bet-right { text-align: left; }
-    .ev-number { font-size: 22px; }
-    .stats-row { grid-template-columns: repeat(2, 1fr); }
-    .odds-row, .conf-row { justify-content: flex-start; }
+  @media (max-width: 620px) {
+    .stats-row { grid-template-columns: repeat(2,1fr); }
+    .bet-top { grid-template-columns: 1fr; }
+    .bet-right { text-align: left; padding: 0; }
+    .pips { justify-content: flex-start; }
   }
 </style>
 </head>
@@ -268,272 +140,313 @@
 
 <header>
   <h1>📈 Kalshi Bets</h1>
-  <div class="live-badge">
-    <span class="live-dot"></span>
-    <span id="updated-at">Loading...</span>
-  </div>
+  <div class="live-badge"><span class="dot"></span><span id="upd">Loading...</span></div>
 </header>
 
 <div class="page">
 
-  <!-- Stats row -->
-  <div class="stats-row" id="stats-row">
-    <div class="stat-box"><div class="num" id="s-open">—</div><div class="desc">Open bets</div></div>
-    <div class="stat-box"><div class="num green" id="s-pnl">$0</div><div class="desc">Total P&L</div></div>
-    <div class="stat-box"><div class="num" id="s-topev">—</div><div class="desc">Best EV per $10</div></div>
+  <div class="stats-row">
+    <div class="stat"><div class="n" id="s1">—</div><div class="l">Open bets</div></div>
+    <div class="stat"><div class="n g" id="s2">$—</div><div class="l">Total P&amp;L</div></div>
+    <div class="stat"><div class="n g" id="s3">—</div><div class="l">Best EV per $10</div></div>
+    <div class="stat"><div class="n" id="s4">—</div><div class="l">Inflation signals ↑</div></div>
   </div>
 
-  <!-- Bets -->
-  <div class="section-title" id="live-title" style="display:none">💰 Live Bets — Real Money</div>
-  <div id="live-bets"></div>
-
-  <div class="section-title">🎯 All Open Bets</div>
-  <div id="all-bets"><div class="loading-msg">Loading bets...</div></div>
-
-  <!-- Inflation signal -->
-  <div class="section-title">📡 Data Signals</div>
-  <div class="signal-bar">
-    <div style="font-size:13px; font-weight:700; margin-bottom:14px; color:#555">
-      Inflation signals — <span id="sig-summary">loading...</span>
-    </div>
-    <div id="signals-list"></div>
+  <div id="live-wrap" style="display:none">
+    <div class="sec-title">💰 Live — Real Money</div>
+    <div id="live-bets"></div>
   </div>
 
-  <!-- Performance -->
-  <div class="section-title">📊 Track Record</div>
-  <div id="perf-list"><div class="loading-msg">Loading...</div></div>
+  <div class="sec-title">🎯 All Bets</div>
+  <div id="all-bets"><div class="empty">Loading...</div></div>
 
-  <div class="footer-note" id="footer-note">Auto-refreshes every 5 min · Data from Supabase</div>
+  <div class="sec-title">📡 Data Signals</div>
+  <div class="signal-card">
+    <div class="signal-title" id="sig-headline">Loading signals...</div>
+    <div id="sig-rows"></div>
+  </div>
 
+  <div class="sec-title">📊 Track Record</div>
+  <div id="perf"></div>
+
+  <div class="footer">Auto-refreshes every 5 min · <a href="https://github.com/Ajohnson18/kai-kalshi" style="color:#ccc">GitHub</a></div>
 </div>
 
 <script>
-const URL = 'https://ooqppogvabchhvtgqnsl.supabase.co';
-const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vcXBwb2d2YWJjaGh2dGdxbnNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NTQyMzYsImV4cCI6MjA5MDEzMDIzNn0.kUeOwuj0iDfT_sd7FXH51tumfUgLX6S4XEJUVHdors0';
+const SB_URL = 'https://ooqppogvabchhvtgqnsl.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vcXBwb2d2YWJjaGh2dGdxbnNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NTQyMzYsImV4cCI6MjA5MDEzMDIzNn0.kUeOwuj0iDfT_sd7FXH51tumfUgLX6S4XEJUVHdors0';
 
-const q = async (table, select='*') => {
-  const r = await fetch(`${URL}/rest/v1/${table}?select=${select}`, {
-    headers: { apikey: KEY, Authorization: `Bearer ${KEY}` }
+const sbFetch = async (table, qs='') => {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?${qs}`, {
+    headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
   });
   return r.json();
 };
 
-const esc = s => String(s??'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const esc = s => String(s??'').replace(/</g,'&lt;');
+const fmt$ = (v,always=true) => v==null?'—': (v>=0? (always?'+$':'$') : '-$') + Math.abs(v).toFixed(2);
+const fmtPct = v => Math.round(parseFloat(v||0)*100) + '%';
+const fmtDate = d => d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—';
+const daysLeft = d => { if(!d) return null; const n=Math.ceil((new Date(d)-new Date())/86400000); return n<=0?'Today':n+'d'; };
 
-function kalshiUrl(ticker) {
-  const s = ticker.split('-')[0].toLowerCase();
-  const e = ticker.split('-').slice(0,-1).join('-').toLowerCase();
-  return `https://kalshi.com/markets/${s}/${e}`;
-}
+const CAT_CLS = { economy:'ec', sports:'sp', politics:'po', companies:'co' };
 
-function catTag(cat) {
-  const map = { economy:'economy', sports:'sports', politics:'politics', companies:'companies' };
-  const c = map[cat?.toLowerCase()] || 'paper';
-  return `<span class="tag ${c}">${esc(cat||'')}</span>`;
-}
-
-function confPips(n) {
-  return Array.from({length:10},(_,i)=>`<div class="conf-pip${i<n?' on':''}"></div>`).join('');
-}
-
-function daysLabel(d) {
-  if (!d) return '';
-  const days = Math.ceil((new Date(d) - new Date()) / 86400000);
-  if (days <= 0) return 'Closing today';
-  return `${days} day${days===1?'':'s'} left`;
-}
-
-function fmtDate(d) {
-  if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-}
-
-// ── Reasoning per bet (plain English) ──
 const REASONS = {
-  'KXECONSTATCPI-26APR-T0.3': 'Cleveland Fed says inflation was 0.76% in March. Market thinks only 19% chance April tops 0.3%. Import prices, factory costs, gas, and rent are all rising.',
-  'KXCPI-26APR-T0.7':  'Cleveland Fed confirmed 0.76% CPI in March. Tariffs are pushing April prices higher. Market only gives 27% odds of beating 0.7%.',
-  'KXCPI-26APR-T0.8':  'Our model says 41% chance. Market says 17%. The tariff basket adds 0.3–0.5% to monthly inflation in the first full tariff month.',
-  'KXCPI-26MAY-T0.5':  'Extrapolating March\'s 0.76% Cleveland Fed reading to May. Market prices this at 22%. If tariffs stick, May CPI easily clears 0.5%.',
-  'KXCPI-26MAY-T0.7':  'Market says only 16% chance May inflation beats 0.7%. Our model says 64%. The gap is the tariff thesis vs the market\'s disinflation assumption.',
-  'KXGDP-26APR30-T2.5': 'Three government trackers — Atlanta Fed (2.0%), NY Fed (2.1%), Trading Economics (1.8%) — all say GDP is near 2%. Market prices 57% chance it beats 2.5%.',
-  'KXDIAZOUT-MDC-26JUN01': 'Cuban leaders average 18 years in power. Market gives 43% chance Díaz-Canel leaves in the next 67 days. No credible signals of a coup or health crisis.',
-  'KXNHLPLAYOFF-26-BOS': 'Boston Bruins are currently Wild Card 1 East with 88 points. Ottawa is 3 points back with ~10 games left. Market says 62% — should be 81%.',
-  'KXUSAIRANAGREEMENT-27-26JUN': 'The last Iran nuclear deal (JCPOA) took 21 months to negotiate. Market gives 24% chance of a full deal in the next 67 days.',
-  'KXNHLPLAYOFF-26-LA': 'LA Kings are OUT of the playoffs — 74 points, 6 back from WC1, 3 back from WC2 with ~10 games left. Need both teams above them to collapse.',
-  'KXSPACEXSTARSHIP-12-26APR30': 'SpaceX\'s last three Starship gaps: 46, 57, 49 days. Average 51 days. Flight 8 was March 6. Flight 9 is due mid-April. News says it\'s slipped to April.',
-  'KXIPOSPACEX-26MAY01': 'Elon Musk has publicly said a SpaceX IPO is "not anytime soon." SpaceX is profitable with no need for public capital. Market gives 19% in 36 days.',
-  'KXEPLTOP4-26-LFC': 'Liverpool is 5th in the EPL, 3 points behind 4th-place Aston Villa with 7 games left. Market says 34% chance they get Top 4.',
+  'KXECONSTATCPI-26APR-T0.3': 'Cleveland Fed says March CPI was 0.76%. Market only prices 19% chance April beats 0.3%. Import prices, factory costs, gas and rent are all rising.',
+  'KXCPI-26APR-T0.7':  'Cleveland Fed confirmed 0.76% MoM in March. Tariffs pushing April prices higher. Market gives 27% odds — model says 64%.',
+  'KXCPI-26APR-T0.8':  'Our model says 41% chance. Market says 17%. First full tariff month typically adds 0.3–0.5% to monthly CPI.',
+  'KXCPI-26MAY-T0.5':  'Extrapolating March\'s 0.76% Cleveland Fed reading to May. Market prices 22%. If tariff inflation persists, May CPI easily clears 0.5%.',
+  'KXCPI-26MAY-T0.7':  'Market says 16% chance May inflation beats 0.7%. Our model says 64%. The gap is the tariff thesis vs the market\'s disinflation assumption.',
+  'KXGDP-26APR30-T2.5':'Three government trackers — GDPNow (2.0%), NY Fed (2.1%), Trading Economics (1.8%) — all say GDP is near 2%. Market prices 57% chance it beats 2.5%.',
+  'KXDIAZOUT-MDC-26JUN01':'Cuban leaders average 18 years in power. Market gives 43% chance Díaz-Canel leaves in 67 days. No credible signals of a coup or health crisis.',
+  'KXNHLPLAYOFF-26-BOS':'Boston Bruins are currently Wild Card 1 East with 88 points, 3 ahead of Ottawa with ~10 games left. Market says 62% — should be 81%.',
+  'KXUSAIRANAGREEMENT-27-26JUN':'The last Iran nuclear deal took 21 months to negotiate. Market gives 24% chance of a full signed deal in 67 days.',
+  'KXNHLPLAYOFF-26-LA': 'LA Kings are OUT — 74 points, 6 back from WC1, 3 back from WC2 with ~10 games left. Need both teams above them to collapse simultaneously.',
+  'KXSPACEXSTARSHIP-12-26APR30':'SpaceX\'s last three inter-flight gaps: 46, 57, 49 days (avg 51). Flight 8 was March 6. Flight 9 is due mid-April. News reports it\'s slipped to April.',
+  'KXIPOSPACEX-26MAY01':'Elon Musk has said SpaceX IPO is "not anytime soon." SpaceX is profitable with no need for public capital. Market gives 19% chance in 36 days.',
+  'KXEPLTOP4-26-LFC':  'Liverpool is 5th in the EPL, 3 points behind 4th-place Aston Villa with 7 games left. Market says 34%.',
 };
 
-function betCard(b) {
-  const isLive  = b.status === 'LIVE';
-  const isFOR   = b.side === 'YES';
-  const ev      = parseFloat(b.ev_per_10 || 0);
-  const modelP  = Math.round(parseFloat(b.model_p || 0) * 100);
-  const mktP    = Math.round(parseFloat(b.mkt_mid || 0) * 100);
-  const conf    = parseInt(b.confidence || 0);
-  const days    = daysLabel(b.closes);
-  const date    = fmtDate(b.closes);
-  const reason  = REASONS[b.ticker] || b.model_note || '';
-  const call    = isFOR ? 'FOR IT' : 'AGAINST';
-  const callCls = isFOR ? 'for' : 'against';
-  const title   = b.title || b.ticker;
+// ── Sparkline SVG ──────────────────────────────────────────────────────────
+function sparkline(history, field, color, w, h, minY, maxY) {
+  if (!history || history.length === 0) return '';
+  if (history.length === 1) {
+    // Just a dot
+    const y = h/2;
+    const x = w/2;
+    return `<circle cx="${x}" cy="${y}" r="3" fill="${color}" opacity="0.8"/>`;
+  }
+  const range = maxY - minY || 1;
+  const pts = history.map((d, i) => {
+    const x = (i / (history.length - 1)) * (w - 4) + 2;
+    const v = parseFloat(d[field] || 0);
+    const y = h - ((v - minY) / range * (h - 6)) - 3;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  const last = pts[pts.length - 1];
+  const [lx, ly] = last.split(',');
+  return `
+    <polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>
+    <circle cx="${lx}" cy="${ly}" r="3" fill="${color}"/>
+  `;
+}
 
-  const mtmHtml = isLive && b.mark_pnl != null
-    ? `<div style="margin-top:8px;font-size:12px;color:${b.mark_pnl>=0?'#15803d':'#b91c1c'};font-weight:700">
-        MTM ${b.mark_pnl>=0?'+':''}$${parseFloat(b.mark_pnl).toFixed(2)}
-       </div>`
-    : '';
+function renderChart(history) {
+  const W = 280, H = 56;
+
+  if (!history || history.length === 0) return '';
+
+  // Market price line
+  const mids  = history.map(d => parseFloat(d.market_mid || 0));
+  const evs   = history.map(d => parseFloat(d.ev_per_10 || 0));
+  const confs = history.map(d => parseInt(d.confidence || 0));
+
+  const midMin = Math.max(0, Math.min(...mids) - 0.05);
+  const midMax = Math.min(1, Math.max(...mids) + 0.05);
+  const evMin  = Math.max(0, Math.min(...evs) - 0.5);
+  const evMax  = Math.max(...evs) + 0.5;
+  const evRange = evMax - evMin || 1;
+
+  // Dates for x axis
+  const dates = history.map(d => {
+    const dt = new Date(d.recorded_at);
+    return dt.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  });
+
+  // Build chart paths
+  const midPath = sparkline(history, 'market_mid', '#94a3b8', W, H, midMin, midMax);
+  const evPath  = sparkline(history, 'ev_per_10',  '#15803d', W, H, evMin, evMax);
+
+  const firstDate = dates[0];
+  const lastDate  = dates[dates.length - 1];
+
+  // Confidence dots row
+  const confDots = confs.map((c, i) => {
+    const x = history.length === 1 ? W/2 : (i / (history.length-1)) * (W-8) + 4;
+    const filled = c >= 5 ? '#1a1a1a' : c >= 3 ? '#94a3b8' : '#e5e5e5';
+    return `<circle cx="${x.toFixed(1)}" cy="6" r="4" fill="${filled}" opacity="0.7"/>`;
+  }).join('');
 
   return `
-    <div class="bet-card${isLive?' live-bet':''}">
-      <div class="bet-left">
-        <div class="bet-title">${esc(title)}</div>
-        <div class="bet-meta">
-          <span class="tag ${callCls}">${call}</span>
-          ${catTag(b.category)}
-          <span class="tag ${isLive?'live':'paper'}">${isLive?'LIVE':'Paper'}</span>
+    <div class="bet-chart">
+      <div class="chart-labels">
+        <span>${esc(firstDate)}</span>
+        <span style="color:#aaa;font-size:10px">Market price &amp; EV trend</span>
+        <span>${esc(lastDate)}</span>
+      </div>
+      <svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="display:block">
+        ${midPath}
+        ${evPath}
+      </svg>
+      <svg width="100%" viewBox="0 0 ${W} 14" preserveAspectRatio="none" style="display:block;margin-top:3px" title="Confidence over time">
+        ${confDots}
+      </svg>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#94a3b8"></div>Market price</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#15803d"></div>EV per $10</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#1a1a1a;height:8px;width:8px;border-radius:50%"></div>Confidence</div>
+      </div>
+    </div>`;
+}
+
+// ── Bet card ───────────────────────────────────────────────────────────────
+function betCard(b, historyMap) {
+  const isLive = b.status === 'LIVE';
+  const isFOR  = b.side === 'YES';
+  const ev     = parseFloat(b.ev_per_10 || 0);
+  const modelP = Math.round(parseFloat(b.model_p || 0) * 100);
+  const mktP   = Math.round(parseFloat(b.mkt_mid || 0) * 100);
+  const conf   = parseInt(b.confidence || 0);
+  const cat    = (b.category || '').toLowerCase();
+  const reason = REASONS[b.ticker] || '';
+  const history= historyMap[b.ticker] || [];
+
+  // Direction vs yesterday
+  let trend = '';
+  if (history.length >= 2) {
+    const prev = parseFloat(history[history.length-2]?.ev_per_10 || 0);
+    const curr = ev;
+    const diff = curr - prev;
+    if (diff > 0.05) trend = `<span style="color:#15803d;font-size:12px;font-weight:700"> ↑ +$${diff.toFixed(2)} since yesterday</span>`;
+    else if (diff < -0.05) trend = `<span style="color:#b91c1c;font-size:12px;font-weight:700"> ↓ $${diff.toFixed(2)} since yesterday</span>`;
+    else trend = `<span style="color:#aaa;font-size:12px"> → unchanged</span>`;
+  }
+
+  const pips = Array.from({length:10},(_,i)=>`<div class="pip${i<conf?' on':''}"></div>`).join('');
+
+  return `
+  <div class="bet-card${isLive?' live':''}">
+    <div class="bet-top">
+      <div>
+        <div class="bet-title">${esc(b.title || b.ticker)}</div>
+        <div class="tags">
+          <span class="tag ${isFOR?'for':'against'}">${isFOR?'FOR IT':'AGAINST'}</span>
+          <span class="tag ${CAT_CLS[cat]||'paper'}">${esc(b.category||'')}</span>
+          <span class="tag ${isLive?'live-tag':'paper'}">${isLive?'LIVE':'Paper'}</span>
         </div>
-        ${reason ? `<div class="bet-reasoning">${esc(reason)}</div>` : ''}
-        <div class="bet-closes">
-          ${days ? `<strong>${days}</strong> · ` : ''}Settles ${date}
-          &nbsp;·&nbsp; <a class="bet-link" href="${kalshiUrl(b.ticker)}" target="_blank">Bet on Kalshi →</a>
+        ${reason?`<div class="reason">${esc(reason)}</div>`:''}
+        <div class="closes">
+          <b>${daysLeft(b.closes)||''}</b>${b.closes?' · Settles '+fmtDate(b.closes):''}
+          &ensp;<a class="bet-link" href="https://kalshi.com/markets/${b.ticker.split('-')[0].toLowerCase()}/${b.ticker.split('-').slice(0,-1).join('-').toLowerCase()}" target="_blank">Bet on Kalshi →</a>
         </div>
       </div>
       <div class="bet-right">
-        <div class="ev-number">+$${ev.toFixed(2)}</div>
-        <div class="ev-label">expected per $10</div>
-        <div class="odds-row">
-          Site: <span class="site">${mktP}%</span> &nbsp;→&nbsp; Ours: <span class="ours">${modelP}%</span>
-        </div>
-        <div class="conf-row">${confPips(conf)}</div>
-        ${mtmHtml}
+        <div class="ev-big">+$${ev.toFixed(2)}</div>
+        <div class="ev-sub">expected per $10${trend}</div>
+        <div class="odds">Site: <span class="site">${mktP}%</span> &rarr; Ours: <span class="ours">${modelP}%</span></div>
+        <div class="pips">${pips}</div>
       </div>
-    </div>`;
+    </div>
+    ${renderChart(history)}
+  </div>`;
 }
 
-// ── Render bets ──────────────────────────────────────────────────────────
-async function renderBets() {
-  const bets = await q('open_bets', '*');
-  if (!Array.isArray(bets)) {
-    document.getElementById('all-bets').innerHTML = '<div class="loading-msg" style="color:#b91c1c">Could not load bets</div>';
-    return;
-  }
-
-  const live  = bets.filter(b => b.status === 'LIVE');
-  const paper = bets.filter(b => b.status !== 'LIVE')
-                    .sort((a,b) => parseFloat(b.ev_per_10)-parseFloat(a.ev_per_10));
-
-  // Stats
-  const top = bets.sort((a,b)=>parseFloat(b.ev_per_10)-parseFloat(a.ev_per_10))[0];
-  document.getElementById('s-open').textContent = bets.length;
-  document.getElementById('s-topev').textContent = top ? '+$'+parseFloat(top.ev_per_10).toFixed(2) : '—';
-
-  // Live bets
-  if (live.length > 0) {
-    document.getElementById('live-title').style.display = 'block';
-    document.getElementById('live-bets').innerHTML = live.map(betCard).join('');
-  }
-
-  // All bets
-  document.getElementById('all-bets').innerHTML = paper.length
-    ? paper.map(betCard).join('')
-    : '<div class="loading-msg">No tracked bets</div>';
-}
-
-// ── Render signals ───────────────────────────────────────────────────────
+// ── Signals ────────────────────────────────────────────────────────────────
 async function renderSignals() {
-  const data = await q('source_readings', 'source,metric,value,direction,period,fetched_at');
-  if (!Array.isArray(data)) return;
+  const raw = await sbFetch('source_readings', 'source,metric,value,direction,period,fetched_at&order=fetched_at.desc');
+  if (!Array.isArray(raw)) return;
 
   const latest = {};
-  data.forEach(r => {
-    const k = r.source+'|'+r.metric;
-    if (!latest[k] || r.fetched_at > latest[k].fetched_at) latest[k] = r;
-  });
+  raw.forEach(r => { const k=r.source+'|'+r.metric; if(!latest[k]) latest[k]=r; });
 
-  const signals = [
-    { key:'Cleveland Fed|cpi_mom',        label:'CPI (Cleveland Fed)',   unit:'%',      inflationary_if:'UP' },
-    { key:'BLS Import Prices|import_pct', label:'Import Prices',         unit:'% MoM',  inflationary_if:'UP' },
-    { key:'BLS PPI|ppi_pct',              label:'Factory Prices (PPI)',  unit:'% MoM',  inflationary_if:'UP' },
-    { key:'BLS CPI Energy|energy_cpi_pct',label:'Energy CPI',            unit:'% MoM',  inflationary_if:'UP' },
-    { key:'BLS CPI Food|food_cpi_pct',    label:'Food CPI',              unit:'% MoM',  inflationary_if:'UP' },
-    { key:'EIA Gas|avg_price_usd',        label:'Gas Prices',            unit:'$/gal',  inflationary_if:'UP' },
-    { key:'FRED TIPS 5yr|breakeven_pct',  label:'Bond Market Inflation Bet', unit:'%', inflationary_if:null },
-    { key:'Michigan Survey|expect_1yr_pct',label:'What Consumers Expect',unit:'%',      inflationary_if:'UP' },
-    { key:'Atlanta Fed GDPNow|gdp_pct',   label:'GDP Tracker (GDPNow)',  unit:'%',      inflationary_if:null },
-    { key:'NY Fed Nowcast|gdp_pct',       label:'GDP (NY Fed)',          unit:'%',      inflationary_if:null },
+  const SIGS = [
+    { k:'Cleveland Fed|cpi_mom',         l:'CPI MoM (Cleveland Fed)',    u:'%',     inf:'UP' },
+    { k:'BLS Import Prices|import_pct',  l:'Import Prices',              u:'% MoM', inf:'UP' },
+    { k:'BLS PPI|ppi_pct',               l:'Factory Prices (PPI)',       u:'% MoM', inf:'UP' },
+    { k:'BLS CPI Energy|energy_cpi_pct', l:'Energy CPI',                u:'% MoM', inf:'UP' },
+    { k:'BLS CPI Food|food_cpi_pct',     l:'Food Prices (CPI)',          u:'% MoM', inf:'UP' },
+    { k:'EIA Gas|avg_price_usd',         l:'Gas Prices',                u:'$/gal',  inf:'UP' },
+    { k:'FRED TIPS 5yr|breakeven_pct',   l:'Bond Market (5yr TIPS)',    u:'%',      inf:null  },
+    { k:'Michigan Survey|expect_1yr_pct',l:'Consumer Expectations',     u:'%',      inf:'UP'  },
+    { k:'Atlanta Fed GDPNow|gdp_pct',    l:'GDP Tracker (GDPNow)',      u:'%',      inf:null  },
+    { k:'NY Fed Nowcast|gdp_pct',        l:'GDP (NY Fed)',               u:'%',      inf:null  },
   ];
 
-  let upCount = 0, downCount = 0;
-  const rows = signals.map(s => {
-    const r = latest[s.key];
+  let up=0, down=0;
+  const rows = SIGS.map(s => {
+    const r = latest[s.k];
     if (!r) return '';
-    const val = parseFloat(r.value);
     const dir = r.direction;
-    let cls = 'neutral', pct = 50;
-    if (s.inflationary_if === 'UP' && dir === 'UP')   { cls = 'up';   pct = 85; upCount++; }
-    if (s.inflationary_if === 'UP' && dir === 'DOWN')  { cls = 'down'; pct = 20; downCount++; }
-    const display = dir === 'UP' ? `↑ ${val}${s.unit}` : dir === 'DOWN' ? `↓ ${val}${s.unit}` : `${val}${s.unit}`;
-    return `<div class="signal-row" style="margin-bottom:11px">
-      <div class="signal-label">${esc(s.label)}</div>
-      <div class="signal-track"><div class="signal-fill ${cls}" style="width:${pct}%"></div></div>
-      <div class="signal-value ${cls}">${esc(display)}</div>
+    let cls='neutral', pct=50;
+    if (s.inf==='UP' && dir==='UP')   { cls='up';   pct=85; up++; }
+    if (s.inf==='UP' && dir==='DOWN') { cls='down'; pct=18; down++; }
+    const arrow = dir==='UP'?'↑ ': dir==='DOWN'?'↓ ':'';
+    return `<div class="sig-row">
+      <div class="sig-label">${esc(s.l)}</div>
+      <div class="sig-track"><div class="sig-fill ${cls}" style="width:${pct}%"></div></div>
+      <div class="sig-val ${cls}">${arrow}${r.value}${s.u}</div>
     </div>`;
   }).join('');
 
-  document.getElementById('signals-list').innerHTML = rows || '<div style="color:#bbb;font-size:13px">No data yet</div>';
-
-  const total = upCount + downCount;
-  const summary = total === 0 ? 'loading...'
-    : upCount >= downCount * 2 ? `${upCount}/${total} signals point to higher inflation 🔴`
-    : downCount >= upCount * 2 ? `${downCount}/${total} signals point to lower inflation 🟢`
-    : 'mixed signals';
-  document.getElementById('sig-summary').textContent = summary;
+  document.getElementById('sig-rows').innerHTML = rows;
+  document.getElementById('sig-headline').textContent =
+    up > 0 ? `${up} signals pointing to higher inflation 🔴` : 'Mixed signals';
+  document.getElementById('s4').textContent = `${up}/${up+down}`;
 }
 
-// ── Render performance ───────────────────────────────────────────────────
-async function renderPerf() {
-  const perf = await q('bet_performance', '*');
-  const container = document.getElementById('perf-list');
+// ── Main ───────────────────────────────────────────────────────────────────
+async function refresh() {
+  document.getElementById('upd').textContent = 'Refreshing...';
 
-  if (!Array.isArray(perf) || !perf.length) {
-    container.innerHTML = '<div class="loading-msg">First bets settle April 30. P&L will appear here.</div>';
-    document.getElementById('s-pnl').textContent = '$0';
+  // Fetch bets + history in parallel
+  const [bets, history, perf] = await Promise.all([
+    sbFetch('open_bets', '*'),
+    sbFetch('price_history', 'ticker,recorded_at,market_mid,ev_per_10,confidence,model_p&order=recorded_at.asc'),
+    sbFetch('bet_performance', '*'),
+  ]);
+  renderSignals();  // async, don't await
+
+  if (!Array.isArray(bets)) {
+    document.getElementById('all-bets').innerHTML = '<div class="empty" style="color:#b91c1c">Could not load bets.</div>';
     return;
   }
 
-  const totalPnl = perf.reduce((s,p) => s + parseFloat(p.real_pnl||0), 0);
-  document.getElementById('s-pnl').textContent = (totalPnl >= 0 ? '+$' : '-$') + Math.abs(totalPnl).toFixed(2);
-  document.getElementById('s-pnl').className = 'num ' + (totalPnl > 0 ? 'green' : '');
+  // Build history lookup: ticker → sorted array of daily snapshots
+  const histMap = {};
+  if (Array.isArray(history)) {
+    history.forEach(h => {
+      if (!histMap[h.ticker]) histMap[h.ticker] = [];
+      histMap[h.ticker].push(h);
+    });
+  }
 
-  container.innerHTML = perf.map(p => {
-    const resolved = parseInt(p.resolved||0);
-    const wins     = parseInt(p.wins||0);
-    const pnl      = parseFloat(p.real_pnl||0);
-    const wr       = resolved > 0 ? Math.round(wins/resolved*100)+'%' : '—';
-    const pnlStr   = pnl !== 0 ? (pnl>0?'+$':'-$')+Math.abs(pnl).toFixed(2) : '$0';
+  const live  = bets.filter(b=>b.status==='LIVE');
+  const paper = bets.filter(b=>b.status!=='LIVE').sort((a,b)=>parseFloat(b.ev_per_10)-parseFloat(a.ev_per_10));
+  const top   = bets.sort((a,b)=>parseFloat(b.ev_per_10)-parseFloat(a.ev_per_10))[0];
 
-    return `<div class="perf-row">
-      <div>
-        <div class="perf-cat">${esc(p.category)}</div>
-        <div class="perf-stats">${p.total} tracked · ${resolved} settled · win rate: ${wr}</div>
-      </div>
-      <div class="perf-pnl ${pnl>0?'plus':'zero'}">${pnlStr}</div>
-    </div>`;
-  }).join('');
-}
+  document.getElementById('s1').textContent = bets.length;
+  document.getElementById('s3').textContent = top ? '+$'+parseFloat(top.ev_per_10).toFixed(2) : '—';
 
-// ── Main ─────────────────────────────────────────────────────────────────
-async function refresh() {
-  document.getElementById('updated-at').textContent = 'Refreshing...';
-  await Promise.all([renderBets(), renderSignals(), renderPerf()]);
-  document.getElementById('updated-at').textContent =
-    'Updated ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  if (live.length) {
+    document.getElementById('live-wrap').style.display='block';
+    document.getElementById('live-bets').innerHTML = live.map(b=>betCard(b,histMap)).join('');
+  }
+  document.getElementById('all-bets').innerHTML = paper.map(b=>betCard(b,histMap)).join('') || '<div class="empty">No bets tracked</div>';
+
+  // Performance
+  if (Array.isArray(perf) && perf.length) {
+    const totalPnl = perf.reduce((s,p)=>s+parseFloat(p.real_pnl||0),0);
+    document.getElementById('s2').textContent = fmt$(totalPnl);
+    document.getElementById('perf').innerHTML = perf.map(p=>{
+      const pnl = parseFloat(p.real_pnl||0);
+      const resolved = parseInt(p.resolved||0);
+      const wins = parseInt(p.wins||0);
+      return `<div class="perf-card">
+        <div><div class="perf-cat">${esc(p.category)}</div>
+        <div class="perf-meta">${p.total} tracked · ${resolved} settled${resolved>0?' · '+Math.round(wins/resolved*100)+'% win rate':''}</div></div>
+        <div class="perf-pnl ${pnl>0?'g':'z'}">${pnl!==0?fmt$(pnl):'—'}</div>
+      </div>`;
+    }).join('');
+  } else {
+    document.getElementById('s2').textContent = '$0';
+    document.getElementById('perf').innerHTML = '<div class="empty">First bets settle April 30. P&L appears here after resolution.</div>';
+  }
+
+  document.getElementById('upd').textContent = 'Updated ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
 }
 
 refresh();
-setInterval(refresh, 5 * 60 * 1000);
+setInterval(refresh, 5*60*1000);
 </script>
 </body>
 </html>
