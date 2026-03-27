@@ -11,25 +11,26 @@
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   :root {
+    --bg: #f2f0ec;
+    --surface: #ffffff;
     --black: #0a0a0a;
-    --white: #f0f0f0;
-    --neon: #00FF41;
+    --muted: #888;
+    --dim: #d0cec9;
+    --neon: #009922;
     --hot: #FF0066;
-    --volt: #EDFF00;
-    --elec: #00CFFF;
-    --warn: #FF5C00;
-    --border: 3px solid #f0f0f0;
+    --volt: #c8aa00;
+    --elec: #0099CC;
+    --warn: #cc4400;
+    --border: 3px solid #0a0a0a;
     --border-hot: 3px solid #FF0066;
-    --border-neon: 3px solid #00FF41;
-    --border-volt: 3px solid #EDFF00;
-    --border-elec: 3px solid #00CFFF;
+    --border-neon: 3px solid #009922;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: var(--black);
-    color: var(--white);
+    background: var(--bg);
+    color: var(--black);
     font-family: 'Space Grotesk', sans-serif;
     font-size: 14px;
     min-height: 100vh;
@@ -38,12 +39,12 @@
 
   /* ═══ SCROLLBAR ═══ */
   ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-track { background: var(--dim); }
   ::-webkit-scrollbar-thumb { background: var(--hot); }
 
   /* ═══ HEADER ═══ */
   header {
-    background: var(--black);
+    background: var(--surface);
     border-bottom: 4px solid var(--hot);
     padding: 0 24px;
     display: flex;
@@ -65,13 +66,13 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 28px;
     letter-spacing: 3px;
-    color: var(--white);
+    color: var(--black);
     line-height: 1;
   }
 
   .header-tag {
     background: var(--hot);
-    color: var(--black);
+    color: #fff;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
     font-weight: 700;
@@ -87,7 +88,7 @@
     gap: 8px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    color: #666;
+    color: var(--muted);
     letter-spacing: 1px;
     text-transform: uppercase;
   }
@@ -116,6 +117,7 @@
     gap: 0;
     margin-bottom: 24px;
     border: var(--border);
+    background: var(--surface);
   }
 
   .stat {
@@ -123,6 +125,7 @@
     border-right: var(--border);
     position: relative;
     overflow: hidden;
+    background: var(--surface);
   }
 
   .stat:last-child { border-right: none; }
@@ -143,7 +146,7 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 36px;
     line-height: 1;
-    color: var(--white);
+    color: var(--black);
     letter-spacing: 1px;
   }
 
@@ -152,7 +155,7 @@
   .stat .l {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    color: #555;
+    color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 1.5px;
     margin-top: 4px;
@@ -163,7 +166,7 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 20px;
     letter-spacing: 4px;
-    color: var(--volt);
+    color: var(--black);
     margin: 28px 0 10px;
     display: flex;
     align-items: center;
@@ -174,14 +177,14 @@
     content: '';
     flex: 1;
     height: 2px;
-    background: var(--volt);
-    opacity: 0.3;
+    background: var(--black);
+    opacity: 0.15;
   }
 
   .sec-sub {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    color: #444;
+    color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 400;
@@ -192,7 +195,7 @@
     border: 3px solid var(--warn);
     padding: 12px 16px;
     margin-bottom: 16px;
-    background: rgba(255,92,0,0.05);
+    background: rgba(204,68,0,0.06);
     display: none;
   }
 
@@ -212,7 +215,7 @@
     margin-top: 8px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    color: #888;
+    color: var(--muted);
     line-height: 2;
   }
 
@@ -222,13 +225,13 @@
     margin-bottom: 6px;
     cursor: pointer;
     position: relative;
-    background: var(--black);
+    background: var(--surface);
     transition: border-color .1s, background .1s;
   }
 
   .bet-card:hover {
-    border-color: var(--volt);
-    background: #111;
+    border-color: var(--hot);
+    background: #fafafa;
   }
 
   .bet-card.live {
@@ -241,7 +244,7 @@
     top: -1px;
     right: 12px;
     background: var(--hot);
-    color: var(--black);
+    color: #fff;
     font-family: 'Bebas Neue', sans-serif;
     font-size: 13px;
     letter-spacing: 2px;
@@ -262,7 +265,7 @@
     font-weight: 700;
     margin-bottom: 8px;
     line-height: 1.4;
-    color: var(--white);
+    color: var(--black);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -282,18 +285,18 @@
     text-transform: uppercase;
   }
 
-  .tag.for     { background: var(--neon); color: var(--black); }
-  .tag.against { background: var(--hot);  color: var(--black); }
-  .tag.live-tag { background: var(--hot); color: var(--black); }
-  .tag.paper   { border: 1px solid #333; color: #555; background: transparent; }
-  .tag.ec      { border: 1px solid var(--elec); color: var(--elec); }
-  .tag.sp      { border: 1px solid var(--warn); color: var(--warn); }
-  .tag.po      { border: 1px solid #C084FC; color: #C084FC; }
-  .tag.co      { border: 1px solid var(--neon); color: var(--neon); }
+  .tag.for     { background: #d4f7dc; color: #006b1a; border: 1.5px solid #009922; }
+  .tag.against { background: #ffe0ef; color: #c00050; border: 1.5px solid #FF0066; }
+  .tag.live-tag { background: var(--hot); color: #fff; }
+  .tag.paper   { border: 1.5px solid var(--dim); color: var(--muted); background: transparent; }
+  .tag.ec      { border: 1.5px solid var(--elec); color: var(--elec); }
+  .tag.sp      { border: 1.5px solid var(--warn); color: var(--warn); }
+  .tag.po      { border: 1.5px solid #9333ea; color: #9333ea; }
+  .tag.co      { border: 1.5px solid var(--neon); color: var(--neon); }
 
   .reason-short {
     font-size: 12px;
-    color: #555;
+    color: var(--muted);
     line-height: 1.5;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -304,7 +307,7 @@
   .closes {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    color: #444;
+    color: var(--muted);
     margin-top: 6px;
     letter-spacing: 1px;
   }
@@ -312,7 +315,7 @@
   .hint {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    color: #333;
+    color: var(--dim);
     margin-top: 5px;
     letter-spacing: 1px;
   }
@@ -335,7 +338,7 @@
   .ev-sub {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    color: #444;
+    color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 1px;
   }
@@ -343,7 +346,7 @@
   .odds {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    color: #555;
+    color: var(--muted);
     margin-top: 5px;
   }
 
@@ -361,10 +364,10 @@
   .pip {
     width: 7px;
     height: 7px;
-    background: #222;
+    background: var(--dim);
   }
 
-  .pip.on { background: var(--volt); }
+  .pip.on { background: var(--black); }
 
   .trend {
     font-family: 'IBM Plex Mono', monospace;
@@ -376,12 +379,13 @@
 
   .trend.up   { color: var(--neon); }
   .trend.down { color: var(--hot); }
-  .trend.flat { color: #333; }
+  .trend.flat { color: var(--dim); }
 
   /* ═══ MINI SPARKLINE ═══ */
   .card-chart {
     padding: 0 18px 12px;
-    border-top: 1px solid #1a1a1a;
+    border-top: 1px solid var(--dim);
+    background: #fafaf8;
   }
 
   .spark-wrap { height: 44px; margin-top: 8px; }
@@ -393,9 +397,9 @@
     right: 10px;
     width: 24px;
     height: 24px;
-    border: 1px solid #222;
-    background: var(--black);
-    color: #444;
+    border: 1.5px solid var(--dim);
+    background: var(--surface);
+    color: var(--muted);
     cursor: pointer;
     font-size: 12px;
     display: flex;
@@ -413,25 +417,25 @@
 
   .show-hidden-btn {
     background: none;
-    border: 1px solid #222;
+    border: 1.5px solid var(--dim);
     padding: 5px 16px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    color: #444;
+    color: var(--muted);
     cursor: pointer;
     letter-spacing: 1px;
     text-transform: uppercase;
     transition: .1s;
   }
 
-  .show-hidden-btn:hover { border-color: var(--volt); color: var(--volt); }
+  .show-hidden-btn:hover { border-color: var(--black); color: var(--black); }
 
   /* ═══ OVERLAY + MODAL ═══ */
   .overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.75);
+    background: rgba(0,0,0,.45);
     z-index: 200;
   }
 
@@ -443,7 +447,7 @@
     right: -100%;
     width: min(700px, 100%);
     height: 100%;
-    background: #0d0d0d;
+    background: var(--surface);
     border-left: 4px solid var(--hot);
     z-index: 201;
     transition: right .2s cubic-bezier(.4,0,.2,1);
@@ -456,13 +460,13 @@
 
   .modal-header {
     padding: 18px 22px 14px;
-    border-bottom: 2px solid #1a1a1a;
+    border-bottom: 2px solid var(--dim);
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     position: sticky;
     top: 0;
-    background: #0d0d0d;
+    background: var(--surface);
     z-index: 5;
   }
 
@@ -474,16 +478,16 @@
     max-width: calc(100% - 44px);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: var(--white);
+    color: var(--black);
   }
 
   .close-btn {
     width: 32px;
     height: 32px;
-    border: 2px solid #222;
+    border: 2px solid var(--dim);
     background: none;
     cursor: pointer;
-    color: #555;
+    color: var(--muted);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -503,7 +507,7 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 16px;
     letter-spacing: 3px;
-    color: var(--volt);
+    color: var(--black);
     margin-bottom: 10px;
     display: flex;
     align-items: center;
@@ -519,11 +523,12 @@
   }
 
   .verdict-box {
-    border: 2px solid #222;
+    border: 2px solid var(--dim);
     padding: 14px 14px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    background: var(--surface);
   }
 
   .verdict-box::before {
@@ -534,13 +539,13 @@
     height: 3px;
   }
 
-  .verdict-box.green { border-color: var(--neon); }
+  .verdict-box.green { border-color: var(--neon); background: #f0fdf4; }
   .verdict-box.green::before { background: var(--neon); }
 
-  .verdict-box.red   { border-color: var(--hot); }
+  .verdict-box.red   { border-color: var(--hot); background: #fff0f5; }
   .verdict-box.red::before   { background: var(--hot); }
 
-  .verdict-box.blue  { border-color: var(--elec); }
+  .verdict-box.blue  { border-color: var(--elec); background: #f0f8ff; }
   .verdict-box.blue::before  { background: var(--elec); }
 
   .verdict-box .vn {
@@ -548,12 +553,13 @@
     font-size: 24px;
     line-height: 1;
     letter-spacing: 1px;
+    color: var(--black);
   }
 
   .verdict-box .vl {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    color: #555;
+    color: var(--muted);
     margin-top: 4px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -561,8 +567,8 @@
 
   /* charts */
   .chart-box {
-    background: #0d0d0d;
-    border: 2px solid #1a1a1a;
+    background: #fafaf8;
+    border: 2px solid var(--dim);
     padding: 14px;
     margin-bottom: 14px;
   }
@@ -577,24 +583,24 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #444;
+    color: var(--muted);
     text-align: left;
     padding: 6px 10px;
-    border-bottom: 2px solid #1a1a1a;
+    border-bottom: 2px solid var(--dim);
   }
 
   .sources-table td {
     padding: 10px 10px;
-    border-bottom: 1px solid #141414;
+    border-bottom: 1px solid #eee;
     font-size: 12px;
     vertical-align: middle;
   }
 
   .sources-table tr:last-child td { border-bottom: none; }
-  .sources-table tr:hover td { background: #111; }
+  .sources-table tr:hover td { background: #f8f8f5; }
 
-  .src-name { font-weight: 600; color: var(--white); }
-  .src-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #444; margin-top: 2px; }
+  .src-name { font-weight: 600; color: var(--black); }
+  .src-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 2px; }
 
   .src-val { font-family: 'IBM Plex Mono', monospace; font-weight: 700; }
   .src-val.up      { color: var(--hot); }
@@ -609,9 +615,9 @@
   /* reasoning */
   .reasoning-text {
     font-size: 13px;
-    color: #777;
+    color: #444;
     line-height: 1.7;
-    background: #0d0d0d;
+    background: #fafaf8;
     border-left: 3px solid var(--hot);
     padding: 14px 16px;
   }
@@ -621,8 +627,8 @@
 
   /* EV math */
   .ev-math {
-    background: rgba(0,255,65,0.05);
-    border: 1px solid rgba(0,255,65,0.2);
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
     padding: 12px 14px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
@@ -638,8 +644,8 @@
     justify-content: center;
     gap: 8px;
     text-align: center;
-    background: var(--hot);
-    color: var(--black);
+    background: var(--black);
+    color: #fff;
     text-decoration: none;
     padding: 14px;
     font-family: 'Bebas Neue', sans-serif;
@@ -649,22 +655,22 @@
     transition: .1s;
   }
 
-  .kalshi-btn:hover { background: var(--volt); }
+  .kalshi-btn:hover { background: var(--hot); }
 
   .empty-msg {
     padding: 32px;
     text-align: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
-    color: #333;
+    color: var(--dim);
     text-transform: uppercase;
     letter-spacing: 2px;
   }
 
   /* ═══ PERF CARD ═══ */
   .perf-card {
-    background: #0d0d0d;
-    border: 2px solid #1a1a1a;
+    background: var(--surface);
+    border: 2px solid var(--dim);
     padding: 14px 18px;
     margin-bottom: 6px;
     display: flex;
@@ -672,7 +678,7 @@
     align-items: center;
   }
 
-  .perf-card:hover { border-color: #333; }
+  .perf-card:hover { border-color: var(--black); }
 
   .perf-label {
     font-family: 'Space Grotesk', sans-serif;
@@ -680,12 +686,13 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 13px;
+    color: var(--black);
   }
 
   .perf-meta {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    color: #444;
+    color: var(--muted);
     margin-top: 3px;
     letter-spacing: 0.5px;
   }
@@ -697,20 +704,20 @@
   }
 
   .perf-pnl.pos { color: var(--neon); }
-  .perf-pnl.neu { color: #333; }
+  .perf-pnl.neu { color: var(--dim); }
 
   /* ═══ FOOTER ═══ */
   .footer-bar {
     text-align: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    color: #2a2a2a;
+    color: var(--dim);
     margin-top: 32px;
     text-transform: uppercase;
     letter-spacing: 2px;
   }
 
-  .footer-bar a { color: #333; text-decoration: none; }
+  .footer-bar a { color: var(--muted); text-decoration: none; }
   .footer-bar a:hover { color: var(--hot); }
 
   /* ═══ RESPONSIVE ═══ */
@@ -776,7 +783,7 @@
   <!-- SETTLING SOON -->
   <div id="settling-banner">
     <div class="settling-title">
-      <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="#cc4400" stroke-width="2.5" stroke-linecap="square"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       SETTLING SOON
     </div>
     <div id="settling-list"></div>
@@ -791,7 +798,7 @@
 
   <!-- ALL BETS -->
   <div class="sec">
-    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="#EDFF00" stroke-width="2.5" stroke-linecap="square"><rect x="3" y="3" width="18" height="18"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="square"><rect x="3" y="3" width="18" height="18"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
     ALL BETS
     <span class="sec-sub">— CLICK FOR BREAKDOWN</span>
   </div>
@@ -800,7 +807,7 @@
 
   <!-- TRACK RECORD -->
   <div class="sec">
-    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="#EDFF00" stroke-width="2.5" stroke-linecap="square"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="square"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
     TRACK RECORD
   </div>
   <div id="perf"></div>
@@ -939,9 +946,9 @@ function drawMiniChart(canvasId, history) {
       labels,
       datasets:[
         { label:'Market price', data:history.map(h=>parseFloat(h.market_mid||0)*100),
-          borderColor:'#333', borderWidth:1.5, pointRadius:0, tension:.3, fill:false, yAxisID:'pct' },
+          borderColor:'#ccc', borderWidth:1.5, pointRadius:0, tension:.3, fill:false, yAxisID:'pct' },
         { label:'EV per $10', data:history.map(h=>parseFloat(h.ev_per_10||0)),
-          borderColor:'#00FF41', borderWidth:1.5, pointRadius:0, tension:.3, fill:false, yAxisID:'ev' },
+          borderColor:'#009922', borderWidth:1.5, pointRadius:0, tension:.3, fill:false, yAxisID:'ev' },
       ]
     },
     options:{
@@ -968,24 +975,24 @@ function drawModalChart(canvasId, history) {
     data:{
       labels,
       datasets:[
-        { label:'Market price (%)', data:mids, borderColor:'#333', borderWidth:2, pointRadius:3, tension:.3, fill:false, yAxisID:'pct', pointBackgroundColor:'#555' },
-        { label:'EV per $10 ($)', data:evs, borderColor:'#00FF41', borderWidth:2, pointRadius:3, tension:.3, fill:false, yAxisID:'ev', pointBackgroundColor:'#00FF41' },
-        { label:'Confidence (/10)', data:confs, borderColor:'#EDFF00', borderWidth:1.5, pointRadius:3, tension:.1, fill:false, yAxisID:'conf', borderDash:[4,4], pointBackgroundColor:'#EDFF00' },
+        { label:'Market price (%)', data:mids, borderColor:'#aaa', borderWidth:2, pointRadius:3, tension:.3, fill:false, yAxisID:'pct', pointBackgroundColor:'#888' },
+        { label:'EV per $10 ($)', data:evs, borderColor:'#009922', borderWidth:2, pointRadius:3, tension:.3, fill:false, yAxisID:'ev', pointBackgroundColor:'#009922' },
+        { label:'Confidence (/10)', data:confs, borderColor:'#c8aa00', borderWidth:1.5, pointRadius:3, tension:.1, fill:false, yAxisID:'conf', borderDash:[4,4], pointBackgroundColor:'#c8aa00' },
       ]
     },
     options:{
       responsive:true, maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
       plugins:{
-        legend:{position:'bottom',labels:{boxWidth:10,font:{size:10,family:'IBM Plex Mono'},color:'#555'}},
-        tooltip:{backgroundColor:'#111',titleFont:{size:11},bodyFont:{size:11},borderColor:'#222',borderWidth:1},
+        legend:{position:'bottom',labels:{boxWidth:10,font:{size:10,family:'IBM Plex Mono'},color:'#888'}},
+        tooltip:{backgroundColor:'#fff',titleColor:'#0a0a0a',bodyColor:'#0a0a0a',titleFont:{size:11},bodyFont:{size:11},borderColor:'#ddd',borderWidth:1},
       },
       scales:{
-        x:{grid:{color:'#111'},ticks:{font:{size:10,family:'IBM Plex Mono'},color:'#444'}},
-        pct:{ position:'left', title:{display:true,text:'MKT %',font:{size:9,family:'IBM Plex Mono'},color:'#444'},
-              grid:{color:'#111'}, ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#444'}, min:0, max:100 },
-        ev:{ position:'right', title:{display:true,text:'EV/$10',font:{size:9,family:'IBM Plex Mono'},color:'#444'},
-             grid:{display:false}, ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#444'} },
+        x:{grid:{color:'#eee'},ticks:{font:{size:10,family:'IBM Plex Mono'},color:'#888'}},
+        pct:{ position:'left', title:{display:true,text:'MKT %',font:{size:9,family:'IBM Plex Mono'},color:'#aaa'},
+              grid:{color:'#eee'}, ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#888'}, min:0, max:100 },
+        ev:{ position:'right', title:{display:true,text:'EV/$10',font:{size:9,family:'IBM Plex Mono'},color:'#aaa'},
+             grid:{display:false}, ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#888'} },
         conf:{ display:false, min:0, max:10 },
       }
     }
@@ -1037,8 +1044,8 @@ function drawBracketChart(canvasId, eventTicker, activeTick) {
   const labels    = data.buckets.map(b => b.tick);
   const mktVals   = data.buckets.map(b => b.mktMid);
   const modelVals = data.buckets.map(b => b.modelP);
-  const mktColors   = data.buckets.map(b => b.tick === activeTick ? '#FF0066' : '#222');
-  const modelColors = data.buckets.map(b => b.tick === activeTick ? '#00FF41' : '#1a4a1a');
+  const mktColors   = data.buckets.map(b => b.tick === activeTick ? '#FF0066' : '#ddd');
+  const modelColors = data.buckets.map(b => b.tick === activeTick ? '#009922' : '#c8e6d0');
   const chart = new Chart(ctx, {
     type:'bar',
     data:{
@@ -1052,12 +1059,12 @@ function drawBracketChart(canvasId, eventTicker, activeTick) {
       responsive:true, maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
       plugins:{
-        legend:{position:'bottom',labels:{boxWidth:10,font:{size:10,family:'IBM Plex Mono'},color:'#555'}},
-        tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+c.raw.toFixed(1)+'%'},backgroundColor:'#111',borderColor:'#222',borderWidth:1},
+        legend:{position:'bottom',labels:{boxWidth:10,font:{size:10,family:'IBM Plex Mono'},color:'#888'}},
+        tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+c.raw.toFixed(1)+'%'},backgroundColor:'#fff',titleColor:'#0a0a0a',bodyColor:'#0a0a0a',borderColor:'#ddd',borderWidth:1},
       },
       scales:{
-        x:{grid:{display:false},ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#444'}},
-        y:{title:{display:true,text:'PROB %',font:{size:9,family:'IBM Plex Mono'},color:'#444'},grid:{color:'#111'},ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#444',callback:v=>v+'%'}},
+        x:{grid:{display:false},ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#888'}},
+        y:{title:{display:true,text:'PROB %',font:{size:9,family:'IBM Plex Mono'},color:'#aaa'},grid:{color:'#eee'},ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#888',callback:v=>v+'%'}},
       }
     }
   });
@@ -1071,17 +1078,17 @@ function drawModelChart(canvasId, modelP, mktMid, isFOR) {
   const labels = ['MARKET PRICING', 'OUR MODEL'];
   const data   = [parseFloat(mktMid)*100, parseFloat(modelP)*100];
   const colors = isFOR
-    ? [data[0]<data[1]?'#1a1a1a':'#1a4a1a', '#00FF41']
-    : [data[0]>data[1]?'#1a4a1a':'#4a1a1a', '#FF0066'];
+    ? [data[0]<data[1]?'#e0e0e0':'#c8e6d0', '#009922']
+    : [data[0]>data[1]?'#c8e6d0':'#ffd6e7', '#FF0066'];
   const chart = new Chart(ctx, {
     type:'bar',
     data:{ labels, datasets:[{ data, backgroundColor:colors, borderRadius:0, borderSkipped:false }] },
     options:{
       responsive:true, maintainAspectRatio:false, indexAxis:'y',
-      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>' '+c.raw.toFixed(1)+'%'},backgroundColor:'#111',borderColor:'#222',borderWidth:1}},
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>' '+c.raw.toFixed(1)+'%'},backgroundColor:'#fff',titleColor:'#0a0a0a',bodyColor:'#0a0a0a',borderColor:'#ddd',borderWidth:1}},
       scales:{
-        x:{ min:0, max:100, grid:{color:'#111'}, ticks:{callback:v=>v+'%',font:{size:10,family:'IBM Plex Mono'},color:'#444'} },
-        y:{ grid:{display:false}, ticks:{font:{size:10,family:'IBM Plex Mono'},color:'#888'} }
+        x:{ min:0, max:100, grid:{color:'#eee'}, ticks:{callback:v=>v+'%',font:{size:10,family:'IBM Plex Mono'},color:'#888'} },
+        y:{ grid:{display:false}, ticks:{font:{size:10,family:'IBM Plex Mono'},color:'#555'} }
       }
     }
   });
@@ -1140,14 +1147,14 @@ function formatModelNote(note) {
 
 // SVG icons for modal
 const ICONS = {
-  check: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00FF41" stroke-width="2.5" stroke-linecap="square"><polyline points="20 6 9 17 4 12"/></svg>`,
+  check: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#009922" stroke-width="2.5" stroke-linecap="square"><polyline points="20 6 9 17 4 12"/></svg>`,
   clock: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
-  db:    `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2.5" stroke-linecap="square"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+  db:    `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2.5" stroke-linecap="square"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
   arrow: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>`,
-  trend: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EDFF00" stroke-width="2.5" stroke-linecap="square"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
-  brain: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EDFF00" stroke-width="2.5" stroke-linecap="square"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>`,
-  src:   `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EDFF00" stroke-width="2.5" stroke-linecap="square"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
-  settle:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EDFF00" stroke-width="2.5" stroke-linecap="square"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  trend: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="square"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+  brain: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="square"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>`,
+  src:   `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="square"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+  settle:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="square"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
 };
 
 function openBet(ticker) {
@@ -1174,24 +1181,24 @@ function openBet(ticker) {
   if (history.length >= 2) {
     const delta = ev - parseFloat(history[history.length-2]?.ev_per_10||0);
     if (Math.abs(delta) > 0.05) {
-      trendHtml = `<div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;margin-top:6px;color:${delta>0?'#00FF41':'#FF0066'}">${delta>0?'↑ BETTER':'↓ WORSE'} THAN YESTERDAY BY $${Math.abs(delta).toFixed(2)}</div>`;
+      trendHtml = `<div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;margin-top:6px;color:${delta>0?'#009922':'#FF0066'}">${delta>0?'↑ BETTER':'↓ WORSE'} THAN YESTERDAY BY $${Math.abs(delta).toFixed(2)}</div>`;
     }
   }
 
   const FEE = 0.07;
   const evMath = isFOR
-    ? `BUY YES @ ${Math.round(mktMid*100)}¢ ASK. WIN: ${((1-mktMid)*(1-FEE)*100).toFixed(1)}¢ NET. EV = ${(modelP*100).toFixed(0)}% × ${((1-mktMid)*(1-FEE)*100).toFixed(1)}¢ − ${((1-modelP)*mktMid*100).toFixed(1)}¢ = <strong style="color:#00FF41">+${(ev).toFixed(2)}¢ PER DOLLAR</strong>`
-    : `BUY NO @ ${Math.round((1-mktMid)*100)}¢. WIN: ${(mktMid*(1-FEE)*100).toFixed(1)}¢ NET. EV = ${((1-modelP)*100).toFixed(0)}% × ${(mktMid*(1-FEE)*100).toFixed(1)}¢ − ${(modelP*(1-mktMid)*100).toFixed(1)}¢ = <strong style="color:#00FF41">+${(ev).toFixed(2)}¢ PER DOLLAR</strong>`;
+    ? `BUY YES @ ${Math.round(mktMid*100)}¢ ASK. WIN: ${((1-mktMid)*(1-FEE)*100).toFixed(1)}¢ NET. EV = ${(modelP*100).toFixed(0)}% × ${((1-mktMid)*(1-FEE)*100).toFixed(1)}¢ − ${((1-modelP)*mktMid*100).toFixed(1)}¢ = <strong style="color:#009922">+${(ev).toFixed(2)}¢ PER DOLLAR</strong>`
+    : `BUY NO @ ${Math.round((1-mktMid)*100)}¢. WIN: ${(mktMid*(1-FEE)*100).toFixed(1)}¢ NET. EV = ${((1-modelP)*100).toFixed(0)}% × ${(mktMid*(1-FEE)*100).toFixed(1)}¢ − ${(modelP*(1-mktMid)*100).toFixed(1)}¢ = <strong style="color:#009922">+${(ev).toFixed(2)}¢ PER DOLLAR</strong>`;
 
   document.getElementById('modal-title').textContent = b.title || ticker;
   document.getElementById('modal-body').innerHTML = `
     <div class="verdict-row">
       <div class="verdict-box ${isFOR?'green':'red'}">
-        <div class="vn" style="color:${isFOR?'#00FF41':'#FF0066'}">${isFOR?'FOR IT':'AGAINST'}</div>
+        <div class="vn" style="color:${isFOR?'#009922':'#FF0066'}">${isFOR?'FOR IT':'AGAINST'}</div>
         <div class="vl">OUR CALL</div>
       </div>
       <div class="verdict-box blue">
-        <div class="vn" style="color:#00FF41">+$${ev.toFixed(2)}</div>
+        <div class="vn" style="color:#009922">+$${ev.toFixed(2)}</div>
         <div class="vl">EXPECTED / $10${trendHtml}</div>
       </div>
       <div class="verdict-box" style="border-color:#333">
@@ -1220,10 +1227,10 @@ function openBet(ticker) {
       <div class="msec-title">${ICONS.brain} FULL CPI DISTRIBUTION</div>
       <div class="chart-box">
         <div style="height:200px"><canvas id="mc-bracket"></canvas></div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#333;margin-top:10px;text-transform:uppercase;letter-spacing:0.5px;line-height:1.8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#888;margin-top:10px;text-transform:uppercase;letter-spacing:0.5px;line-height:1.8">
           <span style="color:#FF0066">■</span> HIGHLIGHTED = THIS MARKET'S BUCKET &nbsp;·&nbsp;
-          <span style="color:#222">■</span> GRAY = MARKET &nbsp;·&nbsp;
-          <span style="color:#1a4a1a">■</span> GREEN = MODEL
+          <span style="color:#ccc">■</span> GRAY = MARKET &nbsp;·&nbsp;
+          <span style="color:#009922">■</span> GREEN = MODEL
         </div>
       </div>
     </div>` : ''}
@@ -1249,7 +1256,7 @@ function openBet(ticker) {
 
     <div class="msec">
       <div class="msec-title">${ICONS.settle} SETTLEMENT</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#555;letter-spacing:0.5px;text-transform:uppercase">${esc(data.settles||fmtDate(b.closes))}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#666;letter-spacing:0.5px;text-transform:uppercase">${esc(data.settles||fmtDate(b.closes))}</div>
     </div>
 
     <a class="kalshi-btn" href="${kalshiUrl(ticker)}" target="_blank">
@@ -1433,7 +1440,7 @@ async function refresh() {
     settlingBanner.style.display = 'block';
     settlingList.innerHTML = soon.map(b => {
       const d = Math.ceil((new Date(b.closes) - today) / 86400000);
-      return `<span style="margin-right:16px"><strong style="color:#FF5C00">${b.ticker}</strong> ${b.side} — <strong>${d}D</strong></span>`;
+      return `<span style="margin-right:16px"><strong style="color:#cc4400">${b.ticker}</strong> ${b.side} — <strong>${d}D</strong></span>`;
     }).join('<br>');
   } else {
     settlingBanner.style.display = 'none';
