@@ -3,183 +3,811 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kalshi Bets</title>
+<title>KALSHI BETS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- Lucide icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:#f4f3f0;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;}
-
-  /* ── Header ── */
-  header{background:#1a1a1a;color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-  header h1{font-size:16px;font-weight:700;}
-  .live-badge{display:flex;align-items:center;gap:6px;font-size:12px;color:#aaa;}
-  .dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:blink 2s infinite;}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-
-  /* ── List view ── */
-  .page{max-width:860px;margin:0 auto;padding:24px 18px 60px;}
-  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px;}
-  .stat{background:#fff;border:1.5px solid #e8e5e0;border-radius:10px;padding:14px 16px;}
-  .stat .n{font-size:24px;font-weight:800;line-height:1;}
-  .stat .n.g{color:#15803d;}
-  .stat .l{font-size:11px;color:#999;margin-top:3px;}
-  .sec{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999;margin:22px 0 10px;}
-
-  /* ── Bet card (list) ── */
-  .bet-card{background:#fff;border:1.5px solid #e8e5e0;border-radius:12px;margin-bottom:10px;cursor:pointer;transition:box-shadow .15s,border-color .15s;}
-  .bet-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);border-color:#ccc;}
-  .bet-card.live{border-color:#1a1a1a;}
-  .card-top{padding:18px 20px 14px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;}
-  .bet-title{font-size:16px;font-weight:600;margin-bottom:6px;line-height:1.3;}
-  .tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
-  .tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;}
-  .tag.for{background:#dcfce7;color:#15803d;}
-  .tag.against{background:#fee2e2;color:#b91c1c;}
-  .tag.live-tag{background:#1a1a1a;color:#fff;}
-  .tag.paper{background:#f0ede8;color:#999;border:1px solid #ddd;}
-  .tag.ec{background:#eff6ff;color:#1d4ed8;}
-  .tag.sp{background:#fff7ed;color:#c2410c;}
-  .tag.po{background:#fdf4ff;color:#7e22ce;}
-  .tag.co{background:#f0fdf4;color:#15803d;}
-  .reason-short{font-size:13px;color:#777;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  .closes{font-size:12px;color:#bbb;margin-top:7px;}
-  .closes b{color:#666;}
-  .hint{font-size:11px;color:#bbb;margin-top:6px;font-style:italic;}
-
-  /* right */
-  .bet-right{text-align:right;flex-shrink:0;}
-  .ev-big{font-size:26px;font-weight:900;color:#15803d;line-height:1;}
-  .ev-sub{font-size:11px;color:#bbb;}
-  .odds{font-size:12px;color:#aaa;margin-top:5px;}
-  .odds .site{color:#b91c1c;font-weight:700;}
-  .odds .ours{color:#15803d;font-weight:700;}
-  .pips{display:flex;justify-content:flex-end;gap:3px;margin-top:5px;}
-  .pip{width:8px;height:8px;border-radius:50%;background:#e5e5e5;}
-  .pip.on{background:#1a1a1a;}
-  .trend{font-size:11px;font-weight:700;margin-top:3px;}
-  .trend.up{color:#15803d;}
-  .trend.down{color:#b91c1c;}
-  .trend.flat{color:#aaa;}
-
-  /* mini sparkline */
-  .card-chart{padding:0 20px 14px;border-top:1px solid #f0ede8;background:#faf9f7;}
-  .spark-wrap{height:48px;margin-top:10px;}
-
-  /* ── MODAL ── */
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;backdrop-filter:blur(2px);}
-  .overlay.open{display:block;}
-  .modal{position:fixed;top:0;right:-100%;width:min(680px,100%);height:100%;background:#fff;z-index:201;transition:right .25s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column;}
-  .modal.open{right:0;}
-  .modal-header{padding:20px 24px 16px;border-bottom:1px solid #f0ede8;display:flex;align-items:flex-start;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:5;}
-  .modal-title{font-size:18px;font-weight:700;line-height:1.3;max-width:calc(100% - 40px);}
-  .close-btn{width:32px;height:32px;border-radius:50%;border:none;background:#f0ede8;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:12px;}
-  .close-btn:hover{background:#e0ddd8;}
-  .modal-body{padding:24px;flex:1;}
-
-  /* modal sections */
-  .msec{margin-bottom:28px;}
-  .msec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#999;margin-bottom:12px;}
-
-  /* verdict bar */
-  .verdict-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
-  .verdict-box{border-radius:10px;padding:14px 16px;text-align:center;}
-  .verdict-box .vn{font-size:22px;font-weight:900;line-height:1;}
-  .verdict-box .vl{font-size:11px;color:#666;margin-top:3px;}
-  .verdict-box.green{background:#dcfce7;}
-  .verdict-box.red{background:#fee2e2;}
-  .verdict-box.blue{background:#eff6ff;}
-
-  /* chart container */
-  .chart-box{background:#faf9f7;border:1.5px solid #f0ede8;border-radius:10px;padding:16px;margin-bottom:16px;}
-  .chart-box canvas{width:100%!important;max-height:200px;}
-  .chart-title{font-size:12px;font-weight:700;color:#555;margin-bottom:10px;}
-
-  /* sources table */
-  .sources-table{width:100%;border-collapse:collapse;}
-  .sources-table th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#999;text-align:left;padding:6px 10px;border-bottom:1.5px solid #f0ede8;}
-  .sources-table td{padding:10px 10px;border-bottom:1px solid #f7f5f2;font-size:13px;vertical-align:middle;}
-  .sources-table tr:last-child td{border-bottom:none;}
-  .src-name{font-weight:600;color:#1a1a1a;}
-  .src-meta{font-size:11px;color:#aaa;margin-top:1px;}
-  .src-val{font-weight:700;}
-  .src-val.up{color:#b91c1c;}
-  .src-val.down{color:#15803d;}
-  .src-val.neutral{color:#1d4ed8;}
-  .src-check{font-size:16px;}
-  .arrow-up::before{content:'↑ ';}
-  .arrow-down::before{content:'↓ ';}
-
-  /* reasoning */
-  .reasoning-text{font-size:14px;color:#444;line-height:1.65;background:#faf9f7;border-radius:8px;padding:16px;}
-  .reasoning-text p{margin-bottom:10px;}
-  .reasoning-text p:last-child{margin-bottom:0;}
-
-  /* EV math */
-  .ev-math{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;font-size:13px;color:#15803d;}
-  .ev-math strong{font-size:16px;}
-
-  /* kalshi link */
-  .kalshi-btn{display:block;text-align:center;background:#1a1a1a;color:#fff;text-decoration:none;padding:14px;border-radius:10px;font-weight:700;font-size:15px;margin-top:20px;transition:.15s;}
-  .kalshi-btn:hover{background:#333;}
-
-  .empty-msg{padding:32px;text-align:center;color:#bbb;font-style:italic;}
-
-  @media(max-width:600px){
-    .stats-row{grid-template-columns:repeat(2,1fr);}
-    .card-top{grid-template-columns:1fr;}
-    .bet-right{text-align:left;}
-    .pips{justify-content:flex-start;}
-    .verdict-row{grid-template-columns:1fr 1fr;}
+  :root {
+    --black: #0a0a0a;
+    --white: #f0f0f0;
+    --neon: #00FF41;
+    --hot: #FF0066;
+    --volt: #EDFF00;
+    --elec: #00CFFF;
+    --warn: #FF5C00;
+    --border: 3px solid #f0f0f0;
+    --border-hot: 3px solid #FF0066;
+    --border-neon: 3px solid #00FF41;
+    --border-volt: 3px solid #EDFF00;
+    --border-elec: 3px solid #00CFFF;
   }
 
-  /* hide feature */
-  .bet-card{position:relative;}
-  .hide-btn{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;border:none;background:#f0ede8;color:#bbb;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;z-index:2;}
-  .bet-card:hover .hide-btn,.hide-btn:focus{opacity:1;}
-  .hide-btn:hover{background:#e0ddd8;color:#555;}
-  .show-hidden-bar{text-align:center;padding:8px 0;margin-top:2px;}
-  .show-hidden-btn{background:none;border:1.5px solid #e8e5e0;border-radius:20px;padding:5px 16px;font-size:12px;color:#999;cursor:pointer;transition:.15s;}
-  .show-hidden-btn:hover{border-color:#bbb;color:#555;}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ═══ SCROLLBAR ═══ */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: var(--hot); }
+
+  /* ═══ HEADER ═══ */
+  header {
+    background: var(--black);
+    border-bottom: 4px solid var(--hot);
+    padding: 0 24px;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 56px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .header-tag {
+    background: var(--hot);
+    color: var(--black);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 7px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    align-self: center;
+  }
+
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #666;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--neon);
+    animation: blink 1.4s infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+  /* ═══ LAYOUT ═══ */
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 18px 80px;
+  }
+
+  /* ═══ STAT ROW ═══ */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-bottom: 24px;
+    border: var(--border);
+  }
+
+  .stat {
+    padding: 16px 18px;
+    border-right: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat:last-child { border-right: none; }
+
+  .stat::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+  }
+  .stat:nth-child(1)::before { background: var(--elec); }
+  .stat:nth-child(2)::before { background: var(--neon); }
+  .stat:nth-child(3)::before { background: var(--volt); }
+  .stat:nth-child(4)::before { background: var(--hot); }
+
+  .stat .n {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    line-height: 1;
+    color: var(--white);
+    letter-spacing: 1px;
+  }
+
+  .stat .n.g { color: var(--neon); }
+
+  .stat .l {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 4px;
+  }
+
+  /* ═══ SECTION LABELS ═══ */
+  .sec {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 4px;
+    color: var(--volt);
+    margin: 28px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sec::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--volt);
+    opacity: 0.3;
+  }
+
+  .sec-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 400;
+  }
+
+  /* ═══ SETTLING BANNER ═══ */
+  #settling-banner {
+    border: 3px solid var(--warn);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    background: rgba(255,92,0,0.05);
+    display: none;
+  }
+
+  .settling-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--warn);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #settling-list {
+    margin-top: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #888;
+    line-height: 2;
+  }
+
+  /* ═══ BET CARD ═══ */
+  .bet-card {
+    border: var(--border);
+    margin-bottom: 6px;
+    cursor: pointer;
+    position: relative;
+    background: var(--black);
+    transition: border-color .1s, background .1s;
+  }
+
+  .bet-card:hover {
+    border-color: var(--volt);
+    background: #111;
+  }
+
+  .bet-card.live {
+    border-color: var(--hot);
+  }
+
+  .bet-card.live::after {
+    content: 'LIVE';
+    position: absolute;
+    top: -1px;
+    right: 12px;
+    background: var(--hot);
+    color: var(--black);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 2px 8px;
+  }
+
+  .card-top {
+    padding: 16px 18px 12px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .bet-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ═══ TAGS ═══ */
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .tag.for     { background: var(--neon); color: var(--black); }
+  .tag.against { background: var(--hot);  color: var(--black); }
+  .tag.live-tag { background: var(--hot); color: var(--black); }
+  .tag.paper   { border: 1px solid #333; color: #555; background: transparent; }
+  .tag.ec      { border: 1px solid var(--elec); color: var(--elec); }
+  .tag.sp      { border: 1px solid var(--warn); color: var(--warn); }
+  .tag.po      { border: 1px solid #C084FC; color: #C084FC; }
+  .tag.co      { border: 1px solid var(--neon); color: var(--neon); }
+
+  .reason-short {
+    font-size: 12px;
+    color: #555;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .closes {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #444;
+    margin-top: 6px;
+    letter-spacing: 1px;
+  }
+
+  .hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #333;
+    margin-top: 5px;
+    letter-spacing: 1px;
+  }
+
+  /* ═══ BET RIGHT ═══ */
+  .bet-right {
+    text-align: right;
+    flex-shrink: 0;
+    min-width: 110px;
+  }
+
+  .ev-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--neon);
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+
+  .ev-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .odds {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #555;
+    margin-top: 5px;
+  }
+
+  .odds .site  { color: var(--hot); font-weight: 700; }
+  .odds .ours  { color: var(--neon); font-weight: 700; }
+
+  /* confidence pips */
+  .pips {
+    display: flex;
+    justify-content: flex-end;
+    gap: 3px;
+    margin-top: 6px;
+  }
+
+  .pip {
+    width: 7px;
+    height: 7px;
+    background: #222;
+  }
+
+  .pip.on { background: var(--volt); }
+
+  .trend {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .trend.up   { color: var(--neon); }
+  .trend.down { color: var(--hot); }
+  .trend.flat { color: #333; }
+
+  /* ═══ MINI SPARKLINE ═══ */
+  .card-chart {
+    padding: 0 18px 12px;
+    border-top: 1px solid #1a1a1a;
+  }
+
+  .spark-wrap { height: 44px; margin-top: 8px; }
+
+  /* ═══ HIDE BUTTON ═══ */
+  .hide-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #222;
+    background: var(--black);
+    color: #444;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .1s;
+    z-index: 2;
+  }
+
+  .bet-card:hover .hide-btn, .hide-btn:focus { opacity: 1; }
+  .hide-btn:hover { border-color: var(--hot); color: var(--hot); }
+
+  .show-hidden-bar { text-align: center; padding: 8px 0; margin-top: 2px; }
+
+  .show-hidden-btn {
+    background: none;
+    border: 1px solid #222;
+    padding: 5px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #444;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: .1s;
+  }
+
+  .show-hidden-btn:hover { border-color: var(--volt); color: var(--volt); }
+
+  /* ═══ OVERLAY + MODAL ═══ */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.75);
+    z-index: 200;
+  }
+
+  .overlay.open { display: block; }
+
+  .modal {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: min(700px, 100%);
+    height: 100%;
+    background: #0d0d0d;
+    border-left: 4px solid var(--hot);
+    z-index: 201;
+    transition: right .2s cubic-bezier(.4,0,.2,1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal.open { right: 0; }
+
+  .modal-header {
+    padding: 18px 22px 14px;
+    border-bottom: 2px solid #1a1a1a;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: #0d0d0d;
+    z-index: 5;
+  }
+
+  .modal-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    max-width: calc(100% - 44px);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--white);
+  }
+
+  .close-btn {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #222;
+    background: none;
+    cursor: pointer;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 12px;
+    transition: .1s;
+  }
+
+  .close-btn:hover { border-color: var(--hot); color: var(--hot); }
+
+  .modal-body { padding: 22px; flex: 1; }
+
+  /* ═══ MODAL SECTIONS ═══ */
+  .msec { margin-bottom: 26px; }
+
+  .msec-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 3px;
+    color: var(--volt);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* verdict */
+  .verdict-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 22px;
+  }
+
+  .verdict-box {
+    border: 2px solid #222;
+    padding: 14px 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .verdict-box::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%;
+    height: 3px;
+  }
+
+  .verdict-box.green { border-color: var(--neon); }
+  .verdict-box.green::before { background: var(--neon); }
+
+  .verdict-box.red   { border-color: var(--hot); }
+  .verdict-box.red::before   { background: var(--hot); }
+
+  .verdict-box.blue  { border-color: var(--elec); }
+  .verdict-box.blue::before  { background: var(--elec); }
+
+  .verdict-box .vn {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+
+  .verdict-box .vl {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #555;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* charts */
+  .chart-box {
+    background: #0d0d0d;
+    border: 2px solid #1a1a1a;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+
+  .chart-box canvas { width: 100%!important; max-height: 200px; }
+
+  /* sources table */
+  .sources-table { width: 100%; border-collapse: collapse; }
+
+  .sources-table th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #444;
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 2px solid #1a1a1a;
+  }
+
+  .sources-table td {
+    padding: 10px 10px;
+    border-bottom: 1px solid #141414;
+    font-size: 12px;
+    vertical-align: middle;
+  }
+
+  .sources-table tr:last-child td { border-bottom: none; }
+  .sources-table tr:hover td { background: #111; }
+
+  .src-name { font-weight: 600; color: var(--white); }
+  .src-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #444; margin-top: 2px; }
+
+  .src-val { font-family: 'IBM Plex Mono', monospace; font-weight: 700; }
+  .src-val.up      { color: var(--hot); }
+  .src-val.down    { color: var(--neon); }
+  .src-val.neutral { color: var(--elec); }
+
+  .src-check {
+    font-size: 14px;
+    width: 20px;
+  }
+
+  /* reasoning */
+  .reasoning-text {
+    font-size: 13px;
+    color: #777;
+    line-height: 1.7;
+    background: #0d0d0d;
+    border-left: 3px solid var(--hot);
+    padding: 14px 16px;
+  }
+
+  .reasoning-text p { margin-bottom: 10px; }
+  .reasoning-text p:last-child { margin-bottom: 0; }
+
+  /* EV math */
+  .ev-math {
+    background: rgba(0,255,65,0.05);
+    border: 1px solid rgba(0,255,65,0.2);
+    padding: 12px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--neon);
+  }
+
+  .ev-math strong { font-size: 14px; color: var(--neon); }
+
+  /* kalshi button */
+  .kalshi-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    background: var(--hot);
+    color: var(--black);
+    text-decoration: none;
+    padding: 14px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    margin-top: 20px;
+    transition: .1s;
+  }
+
+  .kalshi-btn:hover { background: var(--volt); }
+
+  .empty-msg {
+    padding: 32px;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* ═══ PERF CARD ═══ */
+  .perf-card {
+    background: #0d0d0d;
+    border: 2px solid #1a1a1a;
+    padding: 14px 18px;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .perf-card:hover { border-color: #333; }
+
+  .perf-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 13px;
+  }
+
+  .perf-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #444;
+    margin-top: 3px;
+    letter-spacing: 0.5px;
+  }
+
+  .perf-pnl {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+  }
+
+  .perf-pnl.pos { color: var(--neon); }
+  .perf-pnl.neu { color: #333; }
+
+  /* ═══ FOOTER ═══ */
+  .footer-bar {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #2a2a2a;
+    margin-top: 32px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .footer-bar a { color: #333; text-decoration: none; }
+  .footer-bar a:hover { color: var(--hot); }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 600px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .card-top  { grid-template-columns: 1fr; }
+    .bet-right { text-align: left; }
+    .pips      { justify-content: flex-start; }
+    .verdict-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ═══ ICON SIZING ═══ */
+  .icon-sm { width: 14px; height: 14px; display: inline-block; vertical-align: middle; }
+  .icon-xs { width: 12px; height: 12px; display: inline-block; vertical-align: middle; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>📈 Kalshi Bets</h1>
-  <div class="live-badge"><span class="dot"></span><span id="upd">Loading...</span></div>
+  <div class="header-left">
+    <h1>KALSHI</h1>
+    <span class="header-tag">EDGE ENGINE</span>
+  </div>
+  <div class="live-badge">
+    <span class="dot"></span>
+    <span id="upd">LOADING...</span>
+  </div>
 </header>
 
-<!-- Overlay + modal -->
 <div class="overlay" id="overlay" onclick="closeModal()"></div>
+
 <div class="modal" id="modal">
   <div class="modal-header">
     <div class="modal-title" id="modal-title">—</div>
-    <button class="close-btn" onclick="closeModal()">×</button>
+    <button class="close-btn" onclick="closeModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
   </div>
   <div class="modal-body" id="modal-body"></div>
 </div>
 
 <div class="page">
+  <!-- STATS ROW -->
   <div class="stats-row">
-    <div class="stat"><div class="n" id="s1">—</div><div class="l">Open bets</div></div>
-    <div class="stat"><div class="n g" id="s2">$0</div><div class="l">Total P&L</div></div>
-    <div class="stat"><div class="n g" id="s3">—</div><div class="l">Best EV / $10</div></div>
-    <div class="stat"><div class="n" id="s4">—</div><div class="l">Data signals ↑</div></div>
-  </div>
-  <!-- Settling soon alert -->
-  <div id="settling-banner" style="display:none;background:#fff8e1;border:1.5px solid #f59e0b;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
-    <div style="font-size:13px;font-weight:700;color:#b45309">⏰ Settling soon</div>
-    <div id="settling-list" style="margin-top:6px;font-size:12px;color:#666;line-height:1.8"></div>
+    <div class="stat">
+      <div class="n" id="s1">—</div>
+      <div class="l">OPEN BETS</div>
+    </div>
+    <div class="stat">
+      <div class="n g" id="s2">$0</div>
+      <div class="l">TOTAL P&amp;L</div>
+    </div>
+    <div class="stat">
+      <div class="n g" id="s3">—</div>
+      <div class="l">BEST EV / $10</div>
+    </div>
+    <div class="stat">
+      <div class="n" id="s4">—</div>
+      <div class="l">DATA SIGNALS</div>
+    </div>
   </div>
 
-  <div class="sec" id="live-title" style="display:none">💰 Live — Real Money</div>
+  <!-- SETTLING SOON -->
+  <div id="settling-banner">
+    <div class="settling-title">
+      <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      SETTLING SOON
+    </div>
+    <div id="settling-list"></div>
+  </div>
+
+  <!-- LIVE BETS -->
+  <div class="sec" id="live-title" style="display:none">
+    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="#FF0066" stroke-width="2.5" stroke-linecap="square"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="#FF0066"/></svg>
+    LIVE — REAL MONEY
+  </div>
   <div id="live-bets"></div>
-  <div class="sec">🎯 All Bets <span style="color:#bbb;font-weight:400;text-transform:none;font-size:12px">— click any card for full breakdown</span></div>
+
+  <!-- ALL BETS -->
+  <div class="sec">
+    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="#EDFF00" stroke-width="2.5" stroke-linecap="square"><rect x="3" y="3" width="18" height="18"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+    ALL BETS
+    <span class="sec-sub">— CLICK FOR BREAKDOWN</span>
+  </div>
   <div id="show-hidden-bar" style="display:none"></div>
   <div id="all-bets"><div class="empty-msg">Loading...</div></div>
-  <div class="sec">📊 Track Record</div>
+
+  <!-- TRACK RECORD -->
+  <div class="sec">
+    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="#EDFF00" stroke-width="2.5" stroke-linecap="square"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    TRACK RECORD
+  </div>
   <div id="perf"></div>
-  <div style="text-align:center;font-size:11px;color:#ccc;margin-top:32px">Auto-refreshes every 5 min · <a href="https://github.com/Ajohnson18/kai-kalshi" style="color:#ccc">GitHub</a></div>
+
+  <div class="footer-bar">
+    AUTO-REFRESHES EVERY 5 MIN &nbsp;·&nbsp; <a href="https://github.com/Ajohnson18/kai-kalshi" target="_blank">GITHUB</a>
+  </div>
 </div>
 
 <script>
@@ -194,16 +822,11 @@ const sb = async (table, qs='') => {
 const esc = s => String(s??'').replace(/</g,'&lt;');
 const pct = v => Math.round(parseFloat(v||0)*100)+'%';
 const fmtDate = d => d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—';
-const daysLeft = d => { if(!d)return null; const n=Math.ceil((new Date(d)-new Date())/86400000); return n<=0?'Today':n+'d left'; };
+const daysLeft = d => { if(!d)return null; const n=Math.ceil((new Date(d)-new Date())/86400000); return n<=0?'TODAY':n+'D LEFT'; };
 const kalshiUrl = t => `https://kalshi.com/markets/${t.split('-')[0].toLowerCase()}/${t.split('-').slice(0,-1).join('-').toLowerCase()}`;
 const CAT = {economy:'ec',sports:'sp',politics:'po',companies:'co'};
 
-// ── Per-bet data ────────────────────────────────────────────────────────
-// NAMING KEY: KXECONSTATCPI-26APR = "released in April" = MARCH CPI DATA (settles April 10)
-//             KXECONSTATCPI-26MAY = "released in May"   = APRIL CPI DATA (settles May 12)
-//             These are BUCKET markets: resolve YES if CPI rounds to exactly that value
 const BET_DATA = {
-  // ── MARCH CPI bets — settle April 10 ────────────────────────────────────
   'KXECONSTATCPI-26APR-T0.8': {
     why: `<p><strong>This is a FOR IT (YES) bet.</strong> This market asks: will March 2026 CPI month-over-month round to exactly <strong>0.8%</strong>? (i.e., will the actual reading land between 0.755% and 0.844%?)</p>
           <p>The Cleveland Fed CPI Nowcast — the most accurate near-term inflation predictor — has March at <strong>0.76% MoM</strong>. BLS reports to one decimal: 0.76% rounds to <strong>0.8%</strong> (since 0.76 > 0.755 threshold).</p>
@@ -233,15 +856,14 @@ const BET_DATA = {
     why: `<p><strong>This is an AGAINST (NO) bet.</strong> YES resolves only if May CPI (April's economic data, released June 10) rounds to exactly 0.2%. The market says 26% — the most popular bucket for May. We disagree strongly.</p>
           <p>The market is pricing in a dramatic disinflation path: March ~0.9% → April ~0.4% → May ~0.2%. That's inflation essentially vanishing in two months, with tariffs still active and import prices elevated.</p>
           <p>Our model for May CPI (tariffs still in effect, anchored to March's 0.76% reading): centered at ~0.62%. Probability of landing exactly at 0.2%: under 1%.</p>
-          <p>⚠️ <strong>Confidence is 5/10</strong> — this is 75+ days out and we don't have April's Cleveland Fed nowcast yet. If April CPI actually prints at 0.3–0.4%, this bet's thesis weakens and we should reassess.</p>
+          <p>⚠️ <strong>Confidence is 5/10</strong> — this is 75+ days out and we don't have April's Cleveland Fed nowcast yet.</p>
           <p><strong>Buy NO at 71¢. Win 29¢ (net 27¢) if CPI ≠ 0.2%. EV = 99% × 27¢ − 1% × 71¢ = +$2.70 per $10.</strong></p>`,
     sources: ['Cleveland Fed CPI Nowcast (March)','BLS Import Price Index','BLS PPI'],
     settles: 'May 12, 2026 — BLS releases April 2026 CPI data',
   },
   'KXECONSTATCPI-26MAY-T0.3': {
     why: `<p><strong>This is an AGAINST (NO) bet on the April CPI bucket market.</strong> YES resolves only if April CPI (released May 12) rounds to exactly 0.3%. Market prices it at 21%. Our model: under 1%.</p>
-          <p>Same tariff persistence thesis as the 0.2% bet — the market's soft-landing scenario requires inflation to collapse from March's 0.76% to April's 0.3% in a single month, while tariffs are still in full force. The data doesn't support that.</p>
-          <p>⚠️ <strong>Conviction trigger: if March CPI (April 10) prints below 0.5%</strong>, that's evidence the market's disinflation story is right and this bet should be reassessed.</p>
+          <p>Same tariff persistence thesis as the 0.2% bet — the market's soft-landing scenario requires inflation to collapse from March's 0.76% to April's 0.3% in a single month, while tariffs are still in full force.</p>
           <p><strong>Buy NO at 76¢. Win 24¢ (net 22.3¢) if CPI ≠ 0.3%. EV = 99% × 22.3¢ − 1% × 76¢ = +$2.22 per $10.</strong></p>`,
     sources: ['Cleveland Fed CPI Nowcast (March)','BLS Import Price Index'],
     settles: 'May 12, 2026 — BLS releases April 2026 CPI data',
@@ -253,143 +875,87 @@ const BET_DATA = {
             <li><strong>NY Fed Staff Nowcast:</strong> 2.1% — updated March 26</li>
             <li><strong>Trading Economics consensus:</strong> 1.8%</li>
           </ul>
-          <p>The Kalshi market prices a 57% chance GDP exceeds 2.5%. To reconcile that with the trackers, the market would need to believe GDP averages around 2.85%. All three trackers disagree.</p>
-          <p>A tariff-driven import surge in Q1 dragged GDPNow lower — companies front-loaded imports before tariffs, which shows up as a drag on the GDP calculation.</p>`,
+          <p>The Kalshi market prices a 57% chance GDP exceeds 2.5%. To reconcile that with the trackers, the market would need to believe GDP averages around 2.85%. All three trackers disagree.</p>`,
     sources: ['Atlanta Fed GDPNow','NY Fed Staff Nowcast','Trading Economics consensus'],
     settles: 'April 30, 2026 — BEA advance GDP estimate',
   },
   'KXDIAZOUT-MDC-26JUN01': {
-    why: `<p>Cuban heads of state have extremely long tenures by historical standards:</p>
-          <ul style="margin:8px 0 8px 16px;line-height:1.8">
-            <li>Fulgencio Batista: 7 years</li>
-            <li>Fidel Castro: 49 years</li>
-            <li>Raúl Castro: 12 years</li>
-            <li>Díaz-Canel (current): 6 years, still consolidating power</li>
-          </ul>
-          <p>Average tenure: ~18 years. The regime has maintained control through rolling blackouts, severe food shortages, and mass protests — all of which failed to unseat it.</p>
-          <p>The market gives 43% chance of leadership change in the next 67 days. There are no credible reports of a coup, health crisis, or voluntary resignation. No counter-evidence to our model.</p>`,
+    why: `<p>Cuban heads of state have extremely long tenures by historical standards. Average tenure: ~18 years. The regime has maintained control through rolling blackouts, severe food shortages, and mass protests — all of which failed to unseat it.</p>
+          <p>The market gives 43% chance of leadership change in the next 67 days. There are no credible reports of a coup, health crisis, or voluntary resignation.</p>`,
     sources: ['Wikipedia — Cuban heads of state','Reuters Cuba coverage','Current news scan'],
     settles: 'June 1, 2026',
   },
   'KXNHLPLAYOFF-26-BOS': {
     why: `<p>The Boston Bruins are currently holding the <strong>Wild Card 1 position</strong> in the Eastern Conference with <strong>88 points</strong>. The next team is the Ottawa Senators with 85 points — 3 points behind with approximately 10 games left.</p>
-          <p>For the Bruins to miss the playoffs, Ottawa would need to gain 3+ points on them in the final 10 games. This is possible but requires Boston to underperform while Ottawa simultaneously surges.</p>
           <p>Market says 62% — we say 81%. The market is giving too much credit to Ottawa's potential for a late run given Boston's current cushion.</p>`,
     sources: ['ESPN NHL Standings (March 26, 2026)'],
     settles: 'Early May 2026 — end of NHL regular season',
   },
   'KXUSAIRANAGREEMENT-27-26JUN': {
-    why: `<p>International nuclear agreements are extraordinarily complex and slow to finalize. The best reference point is the 2015 JCPOA (Joint Comprehensive Plan of Action):</p>
-          <ul style="margin:8px 0 8px 16px;line-height:1.8">
-            <li>Negotiations opened: November 2013</li>
-            <li>Framework agreed: April 2015 (17 months)</li>
-            <li>Full deal signed: July 2015 (21 months)</li>
-          </ul>
-          <p>We have 67 days before the June deadline. Current US-Iran talks are described as preliminary. There is no public framework, no technical annexes drafted, no Congressional notification process started.</p>
-          <p>A full signed nuclear deal in 67 days would be the fastest in history by a factor of ~10. The market prices this at 24%. We say 8%.</p>`,
+    why: `<p>International nuclear agreements are extraordinarily complex and slow to finalize. The best reference point is the 2015 JCPOA: negotiations took 21 months total.</p>
+          <p>We have 67 days before the June deadline. Current US-Iran talks are described as preliminary. A full signed nuclear deal in 67 days would be the fastest in history by a factor of ~10. The market prices this at 24%. We say 8%.</p>`,
     sources: ['JCPOA historical timeline (State Dept)','Reuters Iran coverage','Current diplomatic news'],
     settles: 'June 1, 2026',
   },
   'KXNHLPLAYOFF-26-LA': {
-    why: `<p>The LA Kings are currently <strong>out of playoff position</strong> in the Western Conference. As of March 26, 2026:</p>
-          <ul style="margin:8px 0 8px 16px;line-height:1.8">
-            <li>Utah Mammoth: 80 points (Wild Card 1 — IN)</li>
-            <li>Nashville Predators: 77 points (Wild Card 2 — IN)</li>
-            <li>LA Kings: 74 points (OUT — 3 back from WC2, 6 back from WC1)</li>
-          </ul>
-          <p>With ~10 games left, the Kings would need BOTH Utah and Nashville to lose enough games while the Kings win enough to pass them. The probability of both collapsing simultaneously is low.</p>
+    why: `<p>The LA Kings are currently <strong>out of playoff position</strong> in the Western Conference. With ~10 games left, the Kings would need BOTH Utah and Nashville to lose enough games while the Kings win enough to pass them.</p>
           <p>Market says 45%. We say 30%.</p>`,
     sources: ['ESPN NHL Standings (March 26, 2026)'],
     settles: 'Early May 2026 — end of NHL regular season',
   },
   'KXSPACEXSTARSHIP-12-26APR30': {
-    why: `<p>SpaceX has dramatically accelerated Starship's launch cadence in 2025-2026. Recent inter-flight gaps:</p>
-          <ul style="margin:8px 0 8px 16px;line-height:1.8">
-            <li>Flight 5 → 6: 46 days</li>
-            <li>Flight 6 → 7: 57 days</li>
-            <li>Flight 7 → 8: 49 days</li>
-            <li>Recent average: 51 days</li>
-          </ul>
-          <p>Flight 8 launched March 6, 2026. At the 51-day average, Flight 9 is due around <strong>April 17-24</strong> — well within the April 30 deadline.</p>
-          <p>Bloomberg also reported the launch "slipped to April" — confirming it's still coming before April 30, just not as early as March.</p>
-          <p>Market: 44%. Model: 58%.</p>`,
+    why: `<p>SpaceX has dramatically accelerated Starship's launch cadence. Recent inter-flight gaps: Flight 5→6: 46d, Flight 6→7: 57d, Flight 7→8: 49d. Average: 51 days.</p>
+          <p>Flight 8 launched March 6, 2026. At the 51-day average, Flight 9 is due around April 17-24 — well within the April 30 deadline. Market: 44%. Model: 58%.</p>`,
     sources: ['SpaceX official announcements','Wikipedia Starship flight test history','Bloomberg SpaceX coverage'],
     settles: 'April 30, 2026',
   },
   'KXIPOSPACEX-26MAY01': {
-    why: `<p>SpaceX is a profitable private company ($15B+ annual revenue) with no urgency to go public. Elon Musk has repeatedly stated the IPO is "not anytime soon." Key factors:</p>
-          <ul style="margin:8px 0 8px 16px;line-height:1.8">
-            <li>SpaceX generates substantial cash from NASA, DoD, and Starlink subscriptions</li>
-            <li>No capital need — no reason to dilute ownership</li>
-            <li>Elon controls the company and prefers private structure</li>
-            <li>36 days is not enough time to file, register, and complete an IPO even if they wanted to</li>
-          </ul>
-          <p>Market says 19% chance of announcement in 36 days. We say 10%. This is 2x overpriced.</p>`,
+    why: `<p>SpaceX is a profitable private company with no urgency to go public. Elon Musk has repeatedly stated the IPO is "not anytime soon." 36 days is not enough time to file, register, and complete an IPO even if they wanted to.</p>
+          <p>Market says 19% chance of announcement in 36 days. We say 10%.</p>`,
     sources: ['SpaceX financials (reported)','Elon Musk public statements','SEC IPO process timeline'],
     settles: 'May 1, 2026',
   },
   'KXEPLTOP4-26-LFC': {
-    why: `<p>EPL standings with 7 games remaining (March 26, 2026):</p>
-          <ul style="margin:8px 0 8px 16px;line-height:1.8">
-            <li>Arsenal: 70pts (1st — safe)</li>
-            <li>Man City: 60pts (2nd — safe)</li>
-            <li>Man United: 55pts (3rd — likely safe)</li>
-            <li>Aston Villa: 52pts (4th — currently IN)</li>
-            <li>Liverpool: 49pts (5th — <strong>3pts behind 4th</strong>)</li>
-            <li>Chelsea: 49pts (tied with Liverpool)</li>
-          </ul>
-          <p>Liverpool needs to gain 3 points on Aston Villa in 7 games — possible but requires Villa to slip. They're also competing with Chelsea for the same slot.</p>
+    why: `<p>EPL standings with 7 games remaining: Liverpool sits 5th with 49pts, 3 points behind Aston Villa in 4th. Also competing with Chelsea (tied at 49pts) for the same slot.</p>
           <p>Market says 34%. We say 26%. Small edge but the underlying data supports the AGAINST position.</p>`,
     sources: ['ESPN EPL Standings (March 26, 2026)'],
     settles: 'Late May 2026 — end of EPL season',
   },
 };
 
-// Global state
 let allBets = [], histMap = {}, sourceMap = {}, modalCharts = [];
 
-// ── Sparkline (mini) ────────────────────────────────────────────────────
 function drawMiniChart(canvasId, history) {
   const canvas = document.getElementById(canvasId);
   if (!canvas || !history.length) return;
   const ctx = canvas.getContext('2d');
-
   const labels = history.map(h => {
     const d = new Date(h.recorded_at);
     return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
   });
-
   new Chart(ctx, {
     type:'line',
     data:{
       labels,
       datasets:[
         { label:'Market price', data:history.map(h=>parseFloat(h.market_mid||0)*100),
-          borderColor:'#94a3b8', borderWidth:1.5, pointRadius:2, tension:.3,
-          fill:false, yAxisID:'pct' },
+          borderColor:'#333', borderWidth:1.5, pointRadius:0, tension:.3, fill:false, yAxisID:'pct' },
         { label:'EV per $10', data:history.map(h=>parseFloat(h.ev_per_10||0)),
-          borderColor:'#15803d', borderWidth:1.5, pointRadius:2, tension:.3,
-          fill:false, yAxisID:'ev' },
+          borderColor:'#00FF41', borderWidth:1.5, pointRadius:0, tension:.3, fill:false, yAxisID:'ev' },
       ]
     },
     options:{
       responsive:true, maintainAspectRatio:false, animation:false,
       plugins:{legend:{display:false},tooltip:{enabled:false}},
-      scales:{
-        x:{display:false},
-        pct:{display:false, min:0, max:100},
-        ev:{display:false},
-      }
+      scales:{ x:{display:false}, pct:{display:false,min:0,max:100}, ev:{display:false} }
     }
   });
 }
 
-// ── Big modal chart ────────────────────────────────────────────────────
 function drawModalChart(canvasId, history) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-
   const labels = history.map(h => {
     const d = new Date(h.recorded_at);
     return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
@@ -397,36 +963,29 @@ function drawModalChart(canvasId, history) {
   const mids = history.map(h => parseFloat(h.market_mid||0)*100);
   const evs  = history.map(h => parseFloat(h.ev_per_10||0));
   const confs= history.map(h => parseInt(h.confidence||0));
-
   const chart = new Chart(ctx, {
     type:'line',
     data:{
       labels,
       datasets:[
-        { label:'Market price (%)', data:mids,
-          borderColor:'#94a3b8', borderWidth:2, pointRadius:4, tension:.3,
-          fill:false, yAxisID:'pct' },
-        { label:'EV per $10 ($)', data:evs,
-          borderColor:'#15803d', borderWidth:2, pointRadius:4, tension:.3,
-          fill:false, yAxisID:'ev' },
-        { label:'Confidence (/10)', data:confs,
-          borderColor:'#1a1a1a', borderWidth:1.5, pointRadius:4, tension:.1,
-          fill:false, yAxisID:'conf', borderDash:[4,4] },
+        { label:'Market price (%)', data:mids, borderColor:'#333', borderWidth:2, pointRadius:3, tension:.3, fill:false, yAxisID:'pct', pointBackgroundColor:'#555' },
+        { label:'EV per $10 ($)', data:evs, borderColor:'#00FF41', borderWidth:2, pointRadius:3, tension:.3, fill:false, yAxisID:'ev', pointBackgroundColor:'#00FF41' },
+        { label:'Confidence (/10)', data:confs, borderColor:'#EDFF00', borderWidth:1.5, pointRadius:3, tension:.1, fill:false, yAxisID:'conf', borderDash:[4,4], pointBackgroundColor:'#EDFF00' },
       ]
     },
     options:{
       responsive:true, maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
       plugins:{
-        legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}},
-        tooltip:{backgroundColor:'#1a1a1a',titleFont:{size:12},bodyFont:{size:12}},
+        legend:{position:'bottom',labels:{boxWidth:10,font:{size:10,family:'IBM Plex Mono'},color:'#555'}},
+        tooltip:{backgroundColor:'#111',titleFont:{size:11},bodyFont:{size:11},borderColor:'#222',borderWidth:1},
       },
       scales:{
-        x:{grid:{color:'#f0ede8'},ticks:{font:{size:11}}},
-        pct:{ position:'left', title:{display:true,text:'Market price (%)',font:{size:10}},
-              grid:{color:'#f0ede8'}, ticks:{font:{size:10}}, min:0, max:100 },
-        ev:{ position:'right', title:{display:true,text:'EV per $10 ($)',font:{size:10}},
-             grid:{display:false}, ticks:{font:{size:10}} },
+        x:{grid:{color:'#111'},ticks:{font:{size:10,family:'IBM Plex Mono'},color:'#444'}},
+        pct:{ position:'left', title:{display:true,text:'MKT %',font:{size:9,family:'IBM Plex Mono'},color:'#444'},
+              grid:{color:'#111'}, ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#444'}, min:0, max:100 },
+        ev:{ position:'right', title:{display:true,text:'EV/$10',font:{size:9,family:'IBM Plex Mono'},color:'#444'},
+             grid:{display:false}, ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#444'} },
         conf:{ display:false, min:0, max:10 },
       }
     }
@@ -435,7 +994,6 @@ function drawModalChart(canvasId, history) {
   return chart;
 }
 
-// ── CPI bracket distribution chart ─────────────────────────────────────
 const CPI_BRACKETS = {
   'KXECONSTATCPI-26APR': {
     label: 'April 2026 CPI — full probability distribution',
@@ -476,75 +1034,62 @@ function drawBracketChart(canvasId, eventTicker, activeTick) {
   const series = eventTicker.replace(/-26(APR|MAY).*/, '-26$1');
   const data = CPI_BRACKETS[series];
   if (!data) return;
-
   const labels    = data.buckets.map(b => b.tick);
   const mktVals   = data.buckets.map(b => b.mktMid);
   const modelVals = data.buckets.map(b => b.modelP);
-
-  // Highlight the active bucket
-  const mktColors   = data.buckets.map(b => b.tick === activeTick ? '#ef4444' : '#94a3b8');
-  const modelColors = data.buckets.map(b => b.tick === activeTick ? '#15803d' : '#86efac');
-
+  const mktColors   = data.buckets.map(b => b.tick === activeTick ? '#FF0066' : '#222');
+  const modelColors = data.buckets.map(b => b.tick === activeTick ? '#00FF41' : '#1a4a1a');
   const chart = new Chart(ctx, {
     type:'bar',
     data:{
       labels,
       datasets:[
-        { label:'Market %', data:mktVals, backgroundColor:mktColors, borderRadius:3 },
-        { label:'Model %',  data:modelVals, backgroundColor:modelColors, borderRadius:3 },
+        { label:'Market %', data:mktVals, backgroundColor:mktColors, borderRadius:0 },
+        { label:'Model %',  data:modelVals, backgroundColor:modelColors, borderRadius:0 },
       ]
     },
     options:{
       responsive:true, maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
       plugins:{
-        legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}},
-        tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+c.raw.toFixed(1)+'%'}},
-        annotation: undefined,
+        legend:{position:'bottom',labels:{boxWidth:10,font:{size:10,family:'IBM Plex Mono'},color:'#555'}},
+        tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+c.raw.toFixed(1)+'%'},backgroundColor:'#111',borderColor:'#222',borderWidth:1},
       },
       scales:{
-        x:{grid:{display:false},ticks:{font:{size:10}}},
-        y:{title:{display:true,text:'Probability %',font:{size:10}},grid:{color:'#f0ede8'},ticks:{font:{size:10},callback:v=>v+'%'}},
+        x:{grid:{display:false},ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#444'}},
+        y:{title:{display:true,text:'PROB %',font:{size:9,family:'IBM Plex Mono'},color:'#444'},grid:{color:'#111'},ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#444',callback:v=>v+'%'}},
       }
     }
   });
   modalCharts.push(chart);
 }
 
-// ── Model probability chart ─────────────────────────────────────────────
 function drawModelChart(canvasId, modelP, mktMid, isFOR) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-
-  const labels = ['Market pricing', 'Our model says'];
+  const labels = ['MARKET PRICING', 'OUR MODEL'];
   const data   = [parseFloat(mktMid)*100, parseFloat(modelP)*100];
   const colors = isFOR
-    ? [data[0]<data[1]?'#fee2e2':'#dcfce7', '#15803d']
-    : [data[0]>data[1]?'#dcfce7':'#fee2e2', '#b91c1c'];
-
+    ? [data[0]<data[1]?'#1a1a1a':'#1a4a1a', '#00FF41']
+    : [data[0]>data[1]?'#1a4a1a':'#4a1a1a', '#FF0066'];
   const chart = new Chart(ctx, {
     type:'bar',
-    data:{ labels, datasets:[{ data, backgroundColor:colors, borderRadius:6 }] },
+    data:{ labels, datasets:[{ data, backgroundColor:colors, borderRadius:0, borderSkipped:false }] },
     options:{
       responsive:true, maintainAspectRatio:false, indexAxis:'y',
-      plugins:{legend:{display:false},
-        tooltip:{callbacks:{label:c=>' '+c.raw.toFixed(1)+'%'}}},
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>' '+c.raw.toFixed(1)+'%'},backgroundColor:'#111',borderColor:'#222',borderWidth:1}},
       scales:{
-        x:{ min:0, max:100, grid:{color:'#f0ede8'},
-            ticks:{callback:v=>v+'%',font:{size:11}} },
-        y:{ grid:{display:false}, ticks:{font:{size:12}} }
+        x:{ min:0, max:100, grid:{color:'#111'}, ticks:{callback:v=>v+'%',font:{size:10,family:'IBM Plex Mono'},color:'#444'} },
+        y:{ grid:{display:false}, ticks:{font:{size:10,family:'IBM Plex Mono'},color:'#888'} }
       }
     }
   });
   modalCharts.push(chart);
 }
 
-// ── Source readings for a ticker ──────────────────────────────────────────
 function relevantSources(ticker) {
-  const series = ticker.split('-')[0];
   const src = BET_DATA[ticker]?.sources || [];
-
   const KNOWN = {
     'Cleveland Fed CPI Nowcast':    { key:'Cleveland Fed|cpi_mom',         unit:'%', desc:'Most accurate near-term CPI predictor' },
     'Cleveland Fed CPI Nowcast (March)': { key:'Cleveland Fed|cpi_mom',   unit:'%', desc:'March 2026 confirmed reading' },
@@ -555,20 +1100,22 @@ function relevantSources(ticker) {
     'EIA Gas Prices':               { key:'EIA Gas|avg_price_usd',       unit:'$/gal', desc:'Weekly retail gas' },
     'Atlanta Fed GDPNow':           { key:'Atlanta Fed GDPNow|gdp_pct',   unit:'%',     desc:'Real-time GDP tracker' },
     'NY Fed Staff Nowcast':         { key:'NY Fed Nowcast|gdp_pct',       unit:'%',     desc:'Independent GDP model' },
-    'Trading Economics consensus':  { key:null,                           unit:'%',     desc:'Market consensus', value:'1.8', dir:'neutral' },
-    'ESPN NHL Standings (March 26, 2026)': { key:null,                    unit:'',      desc:'Live standings', value:'Live', dir:'neutral' },
-    'ESPN EPL Standings (March 26, 2026)': { key:null,                    unit:'',      desc:'Live standings', value:'Live', dir:'neutral' },
-    'Wikipedia — Cuban heads of state':    { key:null,                    unit:'',      desc:'Historical tenure data', value:'Avg 18yr', dir:'neutral' },
-    'JCPOA historical timeline (State Dept)': { key:null,                 unit:'',      desc:'Deal took 21 months', value:'21mo', dir:'neutral' },
-    'SpaceX official announcements':       { key:null,                    unit:'',      desc:'Launch cadence data', value:'~51d avg', dir:'neutral' },
-    'Wikipedia Starship flight test history': { key:null,                 unit:'',      desc:'Flight 5→8: 46, 57, 49d gaps', value:'Confirmed', dir:'neutral' },
-    'Bloomberg SpaceX coverage':           { key:null,                    unit:'',      desc:'Launch slipped to April', value:'April', dir:'neutral' },
-    'Elon Musk public statements':         { key:null,                    unit:'',      desc:'"Not anytime soon"', value:'Bearish', dir:'down' },
-    'Reuters Cuba coverage':               { key:null,                    unit:'',      desc:'No coup/health signals', value:'Stable', dir:'down' },
-    'Current news scan':                   { key:null,                    unit:'',      desc:'No counter-evidence found', value:'Clear', dir:'neutral' },
-    'Reuters Iran coverage':               { key:null,                    unit:'',      desc:'Talks described as preliminary', value:'Early stage', dir:'down' },
+    'Trading Economics consensus':  { key:null, unit:'%', desc:'Market consensus', value:'1.8', dir:'neutral' },
+    'ESPN NHL Standings (March 26, 2026)': { key:null, unit:'', desc:'Live standings', value:'Live', dir:'neutral' },
+    'ESPN EPL Standings (March 26, 2026)': { key:null, unit:'', desc:'Live standings', value:'Live', dir:'neutral' },
+    'Wikipedia — Cuban heads of state':    { key:null, unit:'', desc:'Historical tenure data', value:'Avg 18yr', dir:'neutral' },
+    'JCPOA historical timeline (State Dept)': { key:null, unit:'', desc:'Deal took 21 months', value:'21mo', dir:'neutral' },
+    'SpaceX official announcements':       { key:null, unit:'', desc:'Launch cadence data', value:'~51d avg', dir:'neutral' },
+    'Wikipedia Starship flight test history': { key:null, unit:'', desc:'Flight 5→8: 46, 57, 49d gaps', value:'Confirmed', dir:'neutral' },
+    'Bloomberg SpaceX coverage':           { key:null, unit:'', desc:'Launch slipped to April', value:'April', dir:'neutral' },
+    'Elon Musk public statements':         { key:null, unit:'', desc:'"Not anytime soon"', value:'Bearish', dir:'down' },
+    'Reuters Cuba coverage':               { key:null, unit:'', desc:'No coup/health signals', value:'Stable', dir:'down' },
+    'Current news scan':                   { key:null, unit:'', desc:'No counter-evidence found', value:'Clear', dir:'neutral' },
+    'Reuters Iran coverage':               { key:null, unit:'', desc:'Talks described as preliminary', value:'Early stage', dir:'down' },
+    'SEC IPO process timeline':            { key:null, unit:'', desc:'Min ~6 months for IPO', value:'Too slow', dir:'down' },
+    'Current diplomatic news':             { key:null, unit:'', desc:'No framework drafted', value:'Preliminary', dir:'down' },
+    'SpaceX financials (reported)':        { key:null, unit:'', desc:'Profitable, no capital need', value:'$15B+ rev', dir:'down' },
   };
-
   return src.map(name => {
     const info = KNOWN[name];
     if (!info) return null;
@@ -580,26 +1127,33 @@ function relevantSources(ticker) {
   }).filter(Boolean);
 }
 
-// ── Open modal ─────────────────────────────────────────────────────────
-
-// ── Format model_note (ELI2 plain text) to HTML ───────────────────────────
 function formatModelNote(note) {
   if (!note) return null;
   if (note.includes('active_bets.json')) return null;
   return note.split(/\n\n+/).map(function(p) {
     var t = p.trim();
     if (!t) return '';
-    // Newlines to <br>
     var r = t.replace(/\n/g, '<br>');
     return '<p>' + r + '</p>';
   }).filter(Boolean).join('');
 }
 
+// SVG icons for modal
+const ICONS = {
+  check: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00FF41" stroke-width="2.5" stroke-linecap="square"><polyline points="20 6 9 17 4 12"/></svg>`,
+  clock: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+  db:    `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2.5" stroke-linecap="square"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+  arrow: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>`,
+  trend: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EDFF00" stroke-width="2.5" stroke-linecap="square"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+  brain: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EDFF00" stroke-width="2.5" stroke-linecap="square"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>`,
+  src:   `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EDFF00" stroke-width="2.5" stroke-linecap="square"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+  settle:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EDFF00" stroke-width="2.5" stroke-linecap="square"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+};
+
 function openBet(ticker) {
   const b = allBets.find(x=>x.ticker===ticker);
   if (!b) return;
 
-  // Destroy old charts
   modalCharts.forEach(c=>c.destroy());
   modalCharts = [];
 
@@ -610,111 +1164,100 @@ function openBet(ticker) {
   const mktMid     = parseFloat(b.mkt_mid||0);
   const conf       = parseInt(b.confidence||0);
   const data       = BET_DATA[ticker] || {};
-
-  // Detect bracket market (KXECONSTATCPI series)
   const isBracket  = ticker.startsWith('KXECONSTATCPI');
-  const eventBase  = ticker.replace(/-T[-\d.]+$/, ''); // e.g. KXECONSTATCPI-26APR
-  // Extract active bucket tick (e.g. T0.4 → "0.4%", T-0.2 → "-0.2%")
+  const eventBase  = ticker.replace(/-T[-\d.]+$/, '');
   const tickPart   = ticker.match(/-T([-\d.]+)$/)?.[1];
   const activeTick = tickPart != null ? parseFloat(tickPart).toFixed(1).replace('.0','')+'%' : null;
-  const srcs    = relevantSources(ticker);
+  const srcs       = relevantSources(ticker);
 
-  // Trend vs yesterday
   let trendHtml = '';
   if (history.length >= 2) {
     const delta = ev - parseFloat(history[history.length-2]?.ev_per_10||0);
     if (Math.abs(delta) > 0.05) {
-      trendHtml = `<div style="font-size:13px;font-weight:700;margin-top:6px;color:${delta>0?'#15803d':'#b91c1c'}">${delta>0?'↑ Better':'↓ Worse'} than yesterday by $${Math.abs(delta).toFixed(2)}/10</div>`;
+      trendHtml = `<div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;margin-top:6px;color:${delta>0?'#00FF41':'#FF0066'}">${delta>0?'↑ BETTER':'↓ WORSE'} THAN YESTERDAY BY $${Math.abs(delta).toFixed(2)}</div>`;
     }
   }
 
-  // EV math
   const FEE = 0.07;
   const evMath = isFOR
-    ? `Buy YES @ ${Math.round(mktMid*100)}¢ ask. Win: ${((1-mktMid)*(1-FEE)*100).toFixed(1)}¢ net per dollar. EV = ${(modelP*100).toFixed(0)}% × ${((1-mktMid)*(1-FEE)*100).toFixed(1)}¢ − ${((1-modelP)*mktMid*100).toFixed(1)}¢ = <strong>+${(ev).toFixed(2)}¢ per dollar</strong>`
-    : `Buy NO @ ${Math.round((1-mktMid)*100)}¢. Win: ${(mktMid*(1-FEE)*100).toFixed(1)}¢ net per dollar. EV = ${((1-modelP)*100).toFixed(0)}% × ${(mktMid*(1-FEE)*100).toFixed(1)}¢ − ${(modelP*(1-mktMid)*100).toFixed(1)}¢ = <strong>+${(ev).toFixed(2)}¢ per dollar</strong>`;
+    ? `BUY YES @ ${Math.round(mktMid*100)}¢ ASK. WIN: ${((1-mktMid)*(1-FEE)*100).toFixed(1)}¢ NET. EV = ${(modelP*100).toFixed(0)}% × ${((1-mktMid)*(1-FEE)*100).toFixed(1)}¢ − ${((1-modelP)*mktMid*100).toFixed(1)}¢ = <strong style="color:#00FF41">+${(ev).toFixed(2)}¢ PER DOLLAR</strong>`
+    : `BUY NO @ ${Math.round((1-mktMid)*100)}¢. WIN: ${(mktMid*(1-FEE)*100).toFixed(1)}¢ NET. EV = ${((1-modelP)*100).toFixed(0)}% × ${(mktMid*(1-FEE)*100).toFixed(1)}¢ − ${(modelP*(1-mktMid)*100).toFixed(1)}¢ = <strong style="color:#00FF41">+${(ev).toFixed(2)}¢ PER DOLLAR</strong>`;
 
   document.getElementById('modal-title').textContent = b.title || ticker;
   document.getElementById('modal-body').innerHTML = `
-    <!-- Verdict boxes -->
     <div class="verdict-row">
       <div class="verdict-box ${isFOR?'green':'red'}">
-        <div class="vn">${isFOR?'✅ FOR IT':'❌ AGAINST'}</div>
-        <div class="vl">Our call</div>
+        <div class="vn" style="color:${isFOR?'#00FF41':'#FF0066'}">${isFOR?'FOR IT':'AGAINST'}</div>
+        <div class="vl">OUR CALL</div>
       </div>
       <div class="verdict-box blue">
-        <div class="vn" style="color:#15803d">+$${ev.toFixed(2)}</div>
-        <div class="vl">Expected per $10${trendHtml}</div>
+        <div class="vn" style="color:#00FF41">+$${ev.toFixed(2)}</div>
+        <div class="vl">EXPECTED / $10${trendHtml}</div>
       </div>
-      <div class="verdict-box" style="background:#faf9f7">
-        <div class="vn" style="font-size:14px">${daysLeft(b.closes)||'—'}</div>
-        <div class="vl">Settles ${fmtDate(b.closes)}</div>
+      <div class="verdict-box" style="border-color:#333">
+        <div class="vn" style="font-size:18px;color:#888;letter-spacing:1px">${daysLeft(b.closes)||'—'}</div>
+        <div class="vl">SETTLES ${fmtDate(b.closes)}</div>
       </div>
     </div>
 
-    <!-- Price history chart -->
     <div class="msec">
-      <div class="msec-title">Price history — market vs our EV</div>
+      <div class="msec-title">${ICONS.trend} PRICE HISTORY</div>
       <div class="chart-box">
         <div style="height:190px"><canvas id="mc-history"></canvas></div>
-        ${history.length < 2 ? '<div style="text-align:center;font-size:12px;color:#bbb;margin-top:6px">More data points appear daily as the check-in runs</div>' : ''}
+        ${history.length < 2 ? '<div style="text-align:center;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:#333;margin-top:8px;letter-spacing:1px;text-transform:uppercase">More data points appear daily</div>' : ''}
       </div>
     </div>
 
-    <!-- Model vs market chart -->
     <div class="msec">
-      <div class="msec-title">${isBracket ? 'This specific bucket' : 'Probability comparison'} — market vs our model</div>
+      <div class="msec-title">${ICONS.brain} ${isBracket ? 'BUCKET PROBABILITY' : 'MODEL VS MARKET'}</div>
       <div class="chart-box">
         <div style="height:90px"><canvas id="mc-model"></canvas></div>
-        <div style="font-size:11px;color:#999;margin-top:8px;padding:0 4px">${eqEsc(evMath)}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#444;margin-top:10px;padding:0 2px;line-height:1.6;text-transform:uppercase;letter-spacing:0.5px">${evMath}</div>
       </div>
     </div>
 
-    <!-- CPI bracket distribution (only for bracket markets) -->
     ${isBracket ? `<div class="msec">
-      <div class="msec-title">Full CPI probability distribution — all buckets</div>
+      <div class="msec-title">${ICONS.brain} FULL CPI DISTRIBUTION</div>
       <div class="chart-box">
         <div style="height:200px"><canvas id="mc-bracket"></canvas></div>
-        <div style="font-size:11px;color:#666;margin-top:10px;padding:0 4px">
-          Red bar = the bucket this market covers (highlighted) &nbsp;·&nbsp; 
-          <span style="color:#94a3b8">■</span> Gray = market pricing &nbsp;·&nbsp;
-          <span style="color:#86efac">■</span> Green = our model &nbsp;·&nbsp;
-          The <strong>&gt;0.65%</strong> bucket has no Kalshi market (73% of model probability)
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#333;margin-top:10px;text-transform:uppercase;letter-spacing:0.5px;line-height:1.8">
+          <span style="color:#FF0066">■</span> HIGHLIGHTED = THIS MARKET'S BUCKET &nbsp;·&nbsp;
+          <span style="color:#222">■</span> GRAY = MARKET &nbsp;·&nbsp;
+          <span style="color:#1a4a1a">■</span> GREEN = MODEL
         </div>
       </div>
     </div>` : ''}
 
-    <!-- Why -->
     <div class="msec">
-      <div class="msec-title">Why we made this bet</div>
-      <div class="reasoning-text">${formatModelNote(b.model_note) || data.why || '<p style="color:#999;font-style:italic">Reasoning not yet populated — will appear after next check-in run.</p>'}</div>
+      <div class="msec-title">${ICONS.brain} WHY WE MADE THIS BET</div>
+      <div class="reasoning-text">${formatModelNote(b.model_note) || data.why || '<p style="color:#333;font-style:italic">Reasoning not yet populated.</p>'}</div>
     </div>
 
-    <!-- Sources -->
     ${srcs.length ? `<div class="msec">
-      <div class="msec-title">Data sources confirming this bet</div>
+      <div class="msec-title">${ICONS.src} DATA SOURCES</div>
       <table class="sources-table">
-        <thead><tr><th></th><th>Source</th><th>Reading</th><th>Note</th></tr></thead>
+        <thead><tr><th></th><th>SOURCE</th><th>READING</th><th>NOTE</th></tr></thead>
         <tbody>${srcs.map(s=>`<tr>
-          <td class="src-check">${s.confirmed?'✅':'📋'}</td>
+          <td>${s.confirmed ? ICONS.check : ICONS.db}</td>
           <td><div class="src-name">${esc(s.name)}</div></td>
           <td class="src-val ${s.dir}">${s.dir==='UP'?'↑ ':'↓ '}${esc(s.val)}</td>
           <td class="src-meta">${esc(s.desc)}</td>
         </tr>`).join('')}</tbody>
       </table>
-      <div style="font-size:11px;color:#bbb;margin-top:8px">✅ = live from Supabase today &nbsp;·&nbsp; 📋 = reference/historical</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#333;margin-top:8px;text-transform:uppercase;letter-spacing:1px">GREEN CHECK = LIVE FROM DB &nbsp;·&nbsp; GRAY = REFERENCE</div>
     </div>` : ''}
 
-    <!-- Settles -->
     <div class="msec">
-      <div class="msec-title">Settlement</div>
-      <div style="font-size:13px;color:#555">${esc(data.settles||fmtDate(b.closes))}</div>
+      <div class="msec-title">${ICONS.settle} SETTLEMENT</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#555;letter-spacing:0.5px;text-transform:uppercase">${esc(data.settles||fmtDate(b.closes))}</div>
     </div>
 
-    <a class="kalshi-btn" href="${kalshiUrl(ticker)}" target="_blank">Place this bet on Kalshi →</a>
+    <a class="kalshi-btn" href="${kalshiUrl(ticker)}" target="_blank">
+      PLACE THIS BET ON KALSHI
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+    </a>
   `;
 
-  // Render charts after DOM update
   setTimeout(() => {
     drawModalChart('mc-history', history);
     drawModelChart('mc-model', modelP, mktMid, isFOR);
@@ -726,8 +1269,6 @@ function openBet(ticker) {
   document.body.style.overflow = 'hidden';
 }
 
-function eqEsc(s) { return s; } // allow bold tags through
-
 function closeModal() {
   document.getElementById('overlay').classList.remove('open');
   document.getElementById('modal').classList.remove('open');
@@ -735,7 +1276,6 @@ function closeModal() {
 }
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
 
-// ── Build source map from readings ─────────────────────────────────────
 function buildSourceMap(readings) {
   readings.forEach(r => {
     const k = r.source+'|'+r.metric;
@@ -743,7 +1283,6 @@ function buildSourceMap(readings) {
   });
 }
 
-// ── Card HTML ──────────────────────────────────────────────────────────
 function cardHTML(b) {
   const isLive = b.status==='LIVE';
   const isFOR  = b.side==='YES';
@@ -755,105 +1294,42 @@ function cardHTML(b) {
   const history= histMap[b.ticker]||[];
   const canvasId = 'spark-'+b.ticker.replace(/[^a-z0-9]/gi,'-');
 
-  // Trend
-  let trendCls='flat', trendTxt='→ unchanged';
+  let trendCls='flat', trendTxt='UNCHANGED';
   if (history.length>=2) {
     const delta = ev - parseFloat(history[history.length-2]?.ev_per_10||0);
-    if (delta>0.05){ trendCls='up'; trendTxt=`↑ +$${delta.toFixed(2)} since yesterday`; }
-    else if(delta<-0.05){ trendCls='down'; trendTxt=`↓ $${delta.toFixed(2)} since yesterday`; }
+    if (delta>0.05){ trendCls='up'; trendTxt=`↑ +$${delta.toFixed(2)} SINCE YESTERDAY`; }
+    else if(delta<-0.05){ trendCls='down'; trendTxt=`↓ $${delta.toFixed(2)} SINCE YESTERDAY`; }
   }
 
   const pips = Array.from({length:10},(_,i)=>`<div class="pip${i<conf?' on':''}"></div>`).join('');
 
   return `<div class="bet-card${isLive?' live':''}" onclick="openBet('${b.ticker}')">
-    <button class="hide-btn" onclick="hideBet('${b.ticker}',event)" title="Hide this bet">✕</button>
+    <button class="hide-btn" onclick="hideBet('${b.ticker}',event)" title="Hide">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
     <div class="card-top">
       <div>
         <div class="bet-title">${esc(b.title||b.ticker)}</div>
         <div class="tags">
           <span class="tag ${isFOR?'for':'against'}">${isFOR?'FOR IT':'AGAINST'}</span>
           <span class="tag ${CAT[cat]||'paper'}">${esc(b.category||'')}</span>
-          <span class="tag ${isLive?'live-tag':'paper'}">${isLive?'LIVE':'Paper'}</span>
+          <span class="tag ${isLive?'live-tag':'paper'}">${isLive?'LIVE':'PAPER'}</span>
         </div>
-        <div class="hint">Click to see full breakdown &amp; charts</div>
+        <div class="hint">// CLICK FOR FULL BREAKDOWN + CHARTS</div>
       </div>
       <div class="bet-right">
         <div class="ev-big">+$${ev.toFixed(2)}</div>
-        <div class="ev-sub">per $10</div>
-        <div class="odds">Site: <span class="site">${mktP}%</span> → Ours: <span class="ours">${modelP}%</span></div>
+        <div class="ev-sub">PER $10</div>
+        <div class="odds">MKT: <span class="site">${mktP}%</span> &rarr; OURS: <span class="ours">${modelP}%</span></div>
         <div class="pips">${pips}</div>
         <div class="trend ${trendCls}">${trendTxt}</div>
       </div>
     </div>
     <div class="card-chart">
-      <div class="spark-wrap"><canvas id="${canvasId}" height="48"></canvas></div>
+      <div class="spark-wrap"><canvas id="${canvasId}" height="44"></canvas></div>
     </div>
   </div>`;
 }
-
-// ── Main ───────────────────────────────────────────────────────────────
-async function refresh() {
-  document.getElementById('upd').textContent = 'Refreshing...';
-
-  const [bets, history, readings, perf] = await Promise.all([
-    sb('bets','select=*&resolved_at=is.null&order=ev_per_10.desc.nullslast'),
-    sb('price_history','ticker,recorded_at,market_mid,ev_per_10,confidence,model_p&order=recorded_at.asc'),
-    sb('source_readings','source,metric,value,direction,period,fetched_at&order=fetched_at.desc'),
-    sb('bet_performance','*'),
-  ]);
-
-  if (!Array.isArray(bets)) return;
-
-  allBets = bets;
-
-  // Derive status and days_left (bets table doesn't have these computed columns)
-  const _now = new Date();
-  allBets = allBets.map(b => ({
-    ...b,
-    status: b.size_dollars ? 'LIVE' : 'PAPER',
-    days_left: b.closes ? Math.ceil((new Date(b.closes) - _now) / 86400000) : null,
-  }));
-
-  // Build maps
-  if (Array.isArray(history)) {
-    histMap = {};
-    history.forEach(h => { (histMap[h.ticker]=histMap[h.ticker]||[]).push(h); });
-  }
-  if (Array.isArray(readings)) buildSourceMap(readings);
-
-  // Counts
-  const top = [...bets].sort((a,b)=>parseFloat(b.ev_per_10)-parseFloat(a.ev_per_10))[0];
-  document.getElementById('s1').textContent = bets.length;
-  document.getElementById('s3').textContent = top?'+$'+parseFloat(top.ev_per_10).toFixed(2):'—';
-
-  // Inflation signal count
-  let upSig=0;
-  if (Array.isArray(readings)) {
-    const latest={};
-    readings.forEach(r=>{const k=r.source+'|'+r.metric;if(!latest[k])latest[k]=r;});
-    ['Cleveland Fed|cpi_mom','BLS Import Prices|import_pct','BLS PPI|ppi_pct','BLS CPI Energy|energy_cpi_pct','EIA Gas|avg_price_usd'].forEach(k=>{if(latest[k]?.direction==='UP')upSig++;});
-  }
-  document.getElementById('s4').textContent = upSig+'/5';
-
-  // Settling soon banner (next 14 days)
-  const today = new Date(); today.setHours(0,0,0,0);
-  const soon = bets.filter(b => {
-    if (!b.closes) return false;
-    const d = new Date(b.closes); d.setHours(0,0,0,0);
-    return (d - today) / 86400000 <= 21;
-  }).sort((a,b) => new Date(a.closes) - new Date(b.closes));
-  const settlingBanner = document.getElementById('settling-banner');
-  const settlingList   = document.getElementById('settling-list');
-  if (soon.length) {
-    settlingBanner.style.display = 'block';
-    settlingList.innerHTML = soon.map(b => {
-      const d = Math.ceil((new Date(b.closes) - today) / 86400000);
-      return `<span style="margin-right:16px">📅 <strong>${b.ticker}</strong> ${b.side} — closes in <strong>${d} day${d===1?'':'s'}</strong></span>`;
-    }).join('<br>');
-  } else {
-    settlingBanner.style.display = 'none';
-  }
-
 
 // ── Hide management ──────────────────────────────────────────────────────
 const HIDDEN_KEY = 'kalshi_hidden';
@@ -874,32 +1350,30 @@ function toggleShowHidden() { window._showHidden = !window._showHidden; renderBe
 
 function renderBetCards() {
   const hidden = getHidden();
-  const live  = allBets.filter(b => b.status === 'LIVE');
-  const paper = allBets.filter(b => b.status !== 'LIVE');
-  const visible = paper.filter(b => window._showHidden || !hidden.has(b.ticker));
+  const live   = allBets.filter(b => b.status === 'LIVE');
+  const paper  = allBets.filter(b => b.status !== 'LIVE');
+  const visible= paper.filter(b => window._showHidden || !hidden.has(b.ticker));
   const hiddenCount = paper.filter(b => hidden.has(b.ticker)).length;
 
   if (live.length) {
-    document.getElementById('live-title').style.display = 'block';
+    document.getElementById('live-title').style.display = 'flex';
     document.getElementById('live-bets').innerHTML = live.map(cardHTML).join('');
   }
   document.getElementById('all-bets').innerHTML =
-    visible.map(cardHTML).join('') || '<div class="empty-msg">No tracked bets</div>';
+    visible.map(cardHTML).join('') || '<div class="empty-msg">NO TRACKED BETS</div>';
 
-  // Show-hidden toggle
   const bar = document.getElementById('show-hidden-bar');
   if (hiddenCount > 0) {
     bar.innerHTML = '<button class="show-hidden-btn" onclick="toggleShowHidden()">'
       + (window._showHidden
-          ? 'Hide ' + hiddenCount + ' hidden bet' + (hiddenCount===1?'':'s')
-          : 'Show ' + hiddenCount + ' hidden bet' + (hiddenCount===1?'':'s'))
+          ? 'HIDE ' + hiddenCount + ' HIDDEN BET' + (hiddenCount===1?'':'S')
+          : 'SHOW ' + hiddenCount + ' HIDDEN BET' + (hiddenCount===1?'':'S'))
       + '</button>';
     bar.style.display = 'block';
   } else {
     bar.style.display = 'none';
   }
 
-  // Sparklines
   setTimeout(() => {
     [...live, ...visible].forEach(b => {
       const h = histMap[b.ticker] || [];
@@ -909,10 +1383,64 @@ function renderBetCards() {
   }, 100);
 }
 
-  // Render cards (now delegated to renderBetCards)
+async function refresh() {
+  document.getElementById('upd').textContent = 'REFRESHING...';
+
+  const [bets, history, readings, perf] = await Promise.all([
+    sb('bets','select=*&resolved_at=is.null&order=ev_per_10.desc.nullslast'),
+    sb('price_history','ticker,recorded_at,market_mid,ev_per_10,confidence,model_p&order=recorded_at.asc'),
+    sb('source_readings','source,metric,value,direction,period,fetched_at&order=fetched_at.desc'),
+    sb('bet_performance','*'),
+  ]);
+
+  if (!Array.isArray(bets)) return;
+
+  allBets = bets;
+  const _now = new Date();
+  allBets = allBets.map(b => ({
+    ...b,
+    status: b.size_dollars ? 'LIVE' : 'PAPER',
+    days_left: b.closes ? Math.ceil((new Date(b.closes) - _now) / 86400000) : null,
+  }));
+
+  if (Array.isArray(history)) {
+    histMap = {};
+    history.forEach(h => { (histMap[h.ticker]=histMap[h.ticker]||[]).push(h); });
+  }
+  if (Array.isArray(readings)) buildSourceMap(readings);
+
+  const top = [...bets].sort((a,b)=>parseFloat(b.ev_per_10)-parseFloat(a.ev_per_10))[0];
+  document.getElementById('s1').textContent = bets.length;
+  document.getElementById('s3').textContent = top?'+$'+parseFloat(top.ev_per_10).toFixed(2):'—';
+
+  let upSig=0;
+  if (Array.isArray(readings)) {
+    const latest={};
+    readings.forEach(r=>{const k=r.source+'|'+r.metric;if(!latest[k])latest[k]=r;});
+    ['Cleveland Fed|cpi_mom','BLS Import Prices|import_pct','BLS PPI|ppi_pct','BLS CPI Energy|energy_cpi_pct','EIA Gas|avg_price_usd'].forEach(k=>{if(latest[k]?.direction==='UP')upSig++;});
+  }
+  document.getElementById('s4').textContent = upSig+'/5';
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const soon = bets.filter(b => {
+    if (!b.closes) return false;
+    const d = new Date(b.closes); d.setHours(0,0,0,0);
+    return (d - today) / 86400000 <= 21;
+  }).sort((a,b) => new Date(a.closes) - new Date(b.closes));
+  const settlingBanner = document.getElementById('settling-banner');
+  const settlingList   = document.getElementById('settling-list');
+  if (soon.length) {
+    settlingBanner.style.display = 'block';
+    settlingList.innerHTML = soon.map(b => {
+      const d = Math.ceil((new Date(b.closes) - today) / 86400000);
+      return `<span style="margin-right:16px"><strong style="color:#FF5C00">${b.ticker}</strong> ${b.side} — <strong>${d}D</strong></span>`;
+    }).join('<br>');
+  } else {
+    settlingBanner.style.display = 'none';
+  }
+
   renderBetCards();
 
-  // Performance
   if (Array.isArray(perf) && perf.length) {
     const totalPnl = perf.reduce((s,p)=>s+parseFloat(p.real_pnl||0),0);
     const pnlEl = document.getElementById('s2');
@@ -920,17 +1448,19 @@ function renderBetCards() {
     pnlEl.className = 'n'+(totalPnl>0?' g':'');
     document.getElementById('perf').innerHTML = perf.map(p=>{
       const pnl=parseFloat(p.real_pnl||0),res=parseInt(p.resolved||0),wins=parseInt(p.wins||0);
-      return `<div style="background:#fff;border:1.5px solid #e8e5e0;border-radius:10px;padding:14px 18px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
-        <div><div style="font-weight:600">${esc(p.category)}</div>
-        <div style="font-size:12px;color:#aaa;margin-top:2px">${p.total} tracked · ${res} settled${res>0?` · ${Math.round(wins/res*100)}% win rate`:''}</div></div>
-        <div style="font-size:20px;font-weight:800;color:${pnl>0?'#15803d':'#ccc'}">${pnl!==0?(pnl>0?'+$':'-$')+Math.abs(pnl).toFixed(2):'—'}</div>
+      return `<div class="perf-card">
+        <div>
+          <div class="perf-label">${esc(p.category)}</div>
+          <div class="perf-meta">${p.total} TRACKED · ${res} SETTLED${res>0?` · ${Math.round(wins/res*100)}% WIN RATE`:''}</div>
+        </div>
+        <div class="perf-pnl ${pnl>0?'pos':'neu'}">${pnl!==0?(pnl>0?'+$':'-$')+Math.abs(pnl).toFixed(2):'—'}</div>
       </div>`;
     }).join('');
   } else {
-    document.getElementById('perf').innerHTML = '<div class="empty-msg">First bets settle April 30. P&L appears here.</div>';
+    document.getElementById('perf').innerHTML = '<div class="empty-msg">FIRST BETS SETTLE APRIL 30. P&L APPEARS HERE.</div>';
   }
 
-  document.getElementById('upd').textContent = 'Updated '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  document.getElementById('upd').textContent = 'UPDATED ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
 }
 
 refresh();
