@@ -131,6 +131,15 @@
     .pips{justify-content:flex-start;}
     .verdict-row{grid-template-columns:1fr 1fr;}
   }
+
+  /* hide feature */
+  .bet-card{position:relative;}
+  .hide-btn{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;border:none;background:#f0ede8;color:#bbb;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;z-index:2;}
+  .bet-card:hover .hide-btn,.hide-btn:focus{opacity:1;}
+  .hide-btn:hover{background:#e0ddd8;color:#555;}
+  .show-hidden-bar{text-align:center;padding:8px 0;margin-top:2px;}
+  .show-hidden-btn{background:none;border:1.5px solid #e8e5e0;border-radius:20px;padding:5px 16px;font-size:12px;color:#999;cursor:pointer;transition:.15s;}
+  .show-hidden-btn:hover{border-color:#bbb;color:#555;}
 </style>
 </head>
 <body>
@@ -166,6 +175,7 @@
   <div class="sec" id="live-title" style="display:none">💰 Live — Real Money</div>
   <div id="live-bets"></div>
   <div class="sec">🎯 All Bets <span style="color:#bbb;font-weight:400;text-transform:none;font-size:12px">— click any card for full breakdown</span></div>
+  <div id="show-hidden-bar" style="display:none"></div>
   <div id="all-bets"><div class="empty-msg">Loading...</div></div>
   <div class="sec">📊 Track Record</div>
   <div id="perf"></div>
@@ -756,6 +766,7 @@ function cardHTML(b) {
   const pips = Array.from({length:10},(_,i)=>`<div class="pip${i<conf?' on':''}"></div>`).join('');
 
   return `<div class="bet-card${isLive?' live':''}" onclick="openBet('${b.ticker}')">
+    <button class="hide-btn" onclick="hideBet('${b.ticker}',event)" title="Hide this bet">✕</button>
     <div class="card-top">
       <div>
         <div class="bet-title">${esc(b.title||b.ticker)}</div>
@@ -843,24 +854,63 @@ async function refresh() {
     settlingBanner.style.display = 'none';
   }
 
-  // Render cards
-  const live  = bets.filter(b=>b.status==='LIVE');
-  const paper = bets.filter(b=>b.status!=='LIVE').sort((a,b)=>parseFloat(b.ev_per_10)-parseFloat(a.ev_per_10));
+
+// ── Hide management ──────────────────────────────────────────────────────
+const HIDDEN_KEY = 'kalshi_hidden';
+function getHidden() {
+  try { return new Set(JSON.parse(localStorage.getItem(HIDDEN_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+function saveHidden(s) { localStorage.setItem(HIDDEN_KEY, JSON.stringify([...s])); }
+
+function hideBet(ticker, e) {
+  e.stopPropagation();
+  const h = getHidden(); h.add(ticker); saveHidden(h);
+  renderBetCards();
+}
+
+window._showHidden = false;
+function toggleShowHidden() { window._showHidden = !window._showHidden; renderBetCards(); }
+
+function renderBetCards() {
+  const hidden = getHidden();
+  const live  = allBets.filter(b => b.status === 'LIVE');
+  const paper = allBets.filter(b => b.status !== 'LIVE');
+  const visible = paper.filter(b => window._showHidden || !hidden.has(b.ticker));
+  const hiddenCount = paper.filter(b => hidden.has(b.ticker)).length;
 
   if (live.length) {
-    document.getElementById('live-title').style.display='block';
+    document.getElementById('live-title').style.display = 'block';
     document.getElementById('live-bets').innerHTML = live.map(cardHTML).join('');
   }
-  document.getElementById('all-bets').innerHTML = paper.map(cardHTML).join('') || '<div class="empty-msg">No tracked bets</div>';
+  document.getElementById('all-bets').innerHTML =
+    visible.map(cardHTML).join('') || '<div class="empty-msg">No tracked bets</div>';
 
-  // Draw mini sparklines
+  // Show-hidden toggle
+  const bar = document.getElementById('show-hidden-bar');
+  if (hiddenCount > 0) {
+    bar.innerHTML = '<button class="show-hidden-btn" onclick="toggleShowHidden()">'
+      + (window._showHidden
+          ? 'Hide ' + hiddenCount + ' hidden bet' + (hiddenCount===1?'':'s')
+          : 'Show ' + hiddenCount + ' hidden bet' + (hiddenCount===1?'':'s'))
+      + '</button>';
+    bar.style.display = 'block';
+  } else {
+    bar.style.display = 'none';
+  }
+
+  // Sparklines
   setTimeout(() => {
-    bets.forEach(b => {
-      const h = histMap[b.ticker]||[];
-      const canvasId = 'spark-'+b.ticker.replace(/[^a-z0-9]/gi,'-');
+    [...live, ...visible].forEach(b => {
+      const h = histMap[b.ticker] || [];
+      const canvasId = 'spark-' + b.ticker.replace(/[^a-z0-9]/gi, '-');
       drawMiniChart(canvasId, h);
     });
   }, 100);
+}
+
+  // Render cards (now delegated to renderBetCards)
+  renderBetCards();
 
   // Performance
   if (Array.isArray(perf) && perf.length) {
